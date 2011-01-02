@@ -6,11 +6,16 @@ if( ENV_TYPE == 'RELEASE' ){
 }else{
 	define( 'HOME_URL', 'http://127.0.0.1/VolatileTwit/public_html/' );
 	define( 'ROOT_DIR', 'C:/Develop/xampp/htdocs/VolatileTwit/' );
+	
+	define( 'IPCA_MAIN_BIN', 'C:/obara/Chamomile/data/gamma/ipcaMain.bin' );
+	define( 'KEYWORD_TABLE', 'C:/obara/Chamomile/data/keywords.gamma.csv' );
+	define( 'MECAB_EXE', 'C:/Develop/MeCab/bin/mecab.exe' );
 }
 define( 'CONF_DIR', ROOT_DIR . 'conf/' );
 define( 'INCLUDE_DIR', ROOT_DIR . 'include/' );
 define( 'LOG_DIR', ROOT_DIR . 'log/' );
 define( 'DATA_DIR', ROOT_DIR . 'data/' );
+define( 'TMP_DIR', ROOT_DIR . 'tmp/' );
 define( 'SMARTY_WORK_DIR', ROOT_DIR . 'smarty_work/' );
 define( 'SMARTY_TEMPLATE_DIR', ROOT_DIR . 'smarty/' );
 

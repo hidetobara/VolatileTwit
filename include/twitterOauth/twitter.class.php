@@ -1,5 +1,5 @@
 <?php
-require_once( INCLUDE_DIR . "Log.class.php" );
+require_once( 'Log.php' );
 require_once( INCLUDE_DIR . "twitteroauth/twitteroauth.php" );
 
 
@@ -19,10 +19,7 @@ class TwitterStorage
 		$xml = simplexml_load_string( $context );
 		if( $xml->hash->error )
 		{
-			$path = LOG_DIR . "error/" . date("Ymd") . ".log";
-			$log = Log::factory( $path );
-			$log->error( $context );
-			return;
+			throw new Exeption( $xml->hash->error );
 		}
 		
 		$sinceId = 0;

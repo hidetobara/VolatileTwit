@@ -1,1 +1,6 @@
+.*
 log/*
+tmp/*
+conf/cecret.php
+conf/local.php
+smarty_work/*

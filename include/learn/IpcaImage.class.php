@@ -27,12 +27,12 @@ class IpcaImage
 		$f = fopen( $path, "r" );
 		while( $line = fgets($f) )
 		{
-			$line = rtim( $line );
+			$line = rtrim( $line );
 			$cells = mb_split( ',', $line );
 			$key = $cells[ $colkey ];
 			$val = $cells[ $colval ];
 			if( is_null($key) || is_null($val) ) continue;
-			
+		
 			$this->data[ $key ] = $val;
 		}
 		fclose( $f );

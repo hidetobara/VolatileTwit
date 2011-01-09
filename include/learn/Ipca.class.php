@@ -4,7 +4,7 @@
  */
 class Ipca
 {
-	const MAIN_MAX = 8;
+	const MAIN_MAX = 32;
 	const ITEM_LENGTH = 76800;
 	protected $mains = array();
 	
@@ -17,7 +17,8 @@ class Ipca
 		for( $m = 0; $m < self::MAIN_MAX; $m++ )
 		{
 			$line = fread( $f, self::ITEM_LENGTH*4 );
-			$this->mains[ $m ] = unpack( "f*", $line );
+			$cells = unpack( "f*", $line );
+			$this->mains[ $m ] = array_slice( $cells, 0 );
 		}
 	}
 	

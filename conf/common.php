@@ -8,7 +8,8 @@ if( ENV_TYPE == 'RELEASE' ){
 	define( 'ROOT_DIR', 'C:/Develop/xampp/htdocs/VolatileTwit/' );
 	
 	define( 'IPCA_MAIN_BIN', 'C:/obara/Chamomile/data/gamma/ipcaMain.bin' );
-	define( 'KEYWORD_TABLE', 'C:/obara/Chamomile/data/keywords.gamma.csv' );
+	define( 'KEYWORD_LIST', 'C:/obara/Chamomile/data/keywords.gamma.csv' );
+	define( 'FILTER_LIST', 'C:/obara/Chamomile/data/filter.inverse.gamma.csv' );
 	define( 'MECAB_EXE', 'C:/Develop/MeCab/bin/mecab.exe' );
 }
 define( 'CONF_DIR', ROOT_DIR . 'conf/' );

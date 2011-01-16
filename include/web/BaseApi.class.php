@@ -2,6 +2,9 @@
 require_once( 'Log.php' );
 
 
+/*
+ * API の基底クラス
+ */
 class BaseApi
 {
 	protected $class = 'base';
@@ -61,14 +64,14 @@ class BaseApi
 			case 'xml':
 				$context = $this->toXml( $this->array, 'root' );				
 				header( "Content-type: text/xml" );
-				header( "Content-Length: " . count($context) );
+				//header( "Content-Length: " . count($context) );
 				print $context;
 				break;
 				
 			case 'json':
 				$context = json_encode( $this->array );
 				header( "Content-type: application/json" );
-				header( "Content-Length: " . count($context) );
+				//header( "Content-Length: " . count($context) );
 				print $context;
 				
 			case 'txt':

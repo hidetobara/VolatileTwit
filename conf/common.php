@@ -1,7 +1,7 @@
 <?php
 if( ENV_TYPE == 'RELEASE' ){
 	define( 'HOME_URL', 'http://baraoto.sakura.ne.jp/VolatileTwit/' );
-	define( 'ROOT_DIR', '/home/baraoto/VolatileTwit-trunk/' );
+	define( 'ROOT_DIR', '/home/baraoto/volatile-twit-trunk/' );
 
 	define( 'IPCA_MAIN_BIN', ROOT_DIR . 'tmp/data/ipcaMain.bin' );
 	define( 'KEYWORD_LIST', ROOT_DIR . 'tmp/data/keywords.gamma.csv' );

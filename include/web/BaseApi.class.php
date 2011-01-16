@@ -11,7 +11,7 @@ class BaseApi
 	function __construct( $opt=null )
 	{
 		$this->array = array( 'status' => 'undefined' );
-		$this->format = "txt";
+		$this->format = "xml";
 	}
 	
 	function assign( $name, $value )
@@ -23,6 +23,7 @@ class BaseApi
 	{
 		try
 		{
+			$this->checkFormat();
 			$this->initialize();
 			$this->handle();
 		}
@@ -39,11 +40,10 @@ class BaseApi
 		$this->finalize();
 	}
 
-	protected function checkFormat( $default=null )
+	protected function checkFormat()
 	{
-		$this->format = $_REQUEST['format'];
-		$validFormats = array( 'xml', 'json' );
-		if( !in_array($this->format,$validFormats) ) $this->format = $default;
+		$validFormats = array( 'xml', 'json', 'txt' );
+		if( in_array( $_REQUEST['format'], $validFormats ) ) $this->format = $_REQUEST['format'];
 	}
 	
 	protected function initialize()
@@ -59,14 +59,17 @@ class BaseApi
 		switch($this->format)
 		{
 			case 'xml':
-				$context = $this->toXml( $this->array, 'voice' );				
+				$context = $this->toXml( $this->array, 'root' );				
 				header( "Content-type: text/xml" );
 				header( "Content-Length: " . count($context) );
 				print $context;
 				break;
 				
 			case 'json':
-				print json_encode( $this->array );
+				$context = json_encode( $this->array );
+				header( "Content-type: application/json" );
+				header( "Content-Length: " . count($context) );
+				print $context;
 				
 			case 'txt':
 				var_dump( $this->array );

@@ -45,7 +45,7 @@ class EvaluateApi extends BaseApi
 		if( $rating > 1.0 ) $rating = 1.0;
 		if( $rating < -1.0 ) $rating = -1.0;
 		$this->assign( 'rating', $rating );
-		$this->assign( 'text', $text );
+		$this->assign( 'text', htmlspecialchars($text) );
 		$this->assign( 'status', 'ok' );
 	}
 }	

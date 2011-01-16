@@ -1,4 +1,5 @@
 .*
+configure.php
 log/*
 tmp/*
 conf/cecret.php

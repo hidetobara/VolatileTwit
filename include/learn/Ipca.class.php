@@ -121,7 +121,7 @@ class Ipca
 	}
 	function saveReflect( Array $line, $target )
 	{
-		$path = sprintf( "%sreflect_%d.csv", TMP_DIR, $target );
+		$path = sprintf( "%sdata/reflect_%d.csv", TMP_DIR, $target );
 		$fout = fopen( $path, "w" );
 		foreach( $line as $index => $value )
 		{
@@ -132,7 +132,7 @@ class Ipca
 	}
 	function loadReflect( $target )
 	{
-		$path = sprintf( "%sreflect_%d.csv", TMP_DIR, $target );
+		$path = sprintf( "%sdata/reflect_%d.csv", TMP_DIR, $target );
 		if( !is_file($path) ) return null;
 		
 		$fin = fopen( $path, "r" );		

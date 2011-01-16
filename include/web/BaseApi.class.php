@@ -31,7 +31,7 @@ class BaseApi
 		{
 			$path = LOG_DIR . 'web/' . $this->class . date('Ymd') . '.log';
 			Log::singleton('file', $path, 'ERR', array('mode'=>0777))
-				->log( $ex->getMessage() . " @" . $ex->getFile() . "#" . $ex->getLine() );
+				->err( $ex->getMessage() . " @" . $ex->getFile() . "#" . $ex->getLine() );
 			$this->array = array(
 				'status' => 'fail',
 				'error' => $ex->getMessage() );

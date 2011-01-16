@@ -9,7 +9,7 @@ require_once( INCLUDE_DIR . "web/BaseApi.class.php" );
 class EvaluateApi extends BaseApi
 {
 	const TEXT_LIMIT = 256;
-	const RATING_BIAS = 20.0;
+	const RATING_BIAS = 10.0;
 	
 	function handle()
 	{
@@ -49,8 +49,6 @@ class EvaluateApi extends BaseApi
 		$this->assign( 'status', 'ok' );
 	}
 }	
-$api = new EvaluateApi();
-$api->run();
 
 if( $_REQUEST['help'] )
 {
@@ -74,5 +72,10 @@ if( $_REQUEST['help'] )
 	</body>
 	</html>
 <?php
+}
+else
+{
+	$api = new EvaluateApi();
+	$api->run();
 }
 ?>

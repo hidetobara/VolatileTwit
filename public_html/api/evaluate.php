@@ -1,5 +1,7 @@
 <?php
 require_once( "../../configure.php" );
+require_once( INCLUDE_DIR . "keywords/KeywordsAnalyze.class.php" );
+require_once( INCLUDE_DIR . "keywords/mecab.class.php" );
 require_once( INCLUDE_DIR . "learn/Ipca.class.php" );
 require_once( INCLUDE_DIR . "learn/IpcaImage.class.php" );
 require_once( INCLUDE_DIR . "keywords/KeywordAnalyze.class.php" );
@@ -22,7 +24,7 @@ class EvaluateApi extends BaseApi
 		
 		$analyze = new KeywordAnalyze();
 		$analyze->loadKeywords( KEYWORD_LIST );
-		$mecab = $analyze->mecab( $text );
+		$mecab = mecab( $text );
 		$mecab = $analyze->addKeywordIndex( $mecab, array('動詞','名詞','形容詞','形容動詞') );
 		
 		$filter = new IpcaImage();

@@ -2,6 +2,7 @@
 configure.php
 log/*
 tmp/*
+data/*
 conf/cecret.php
 conf/local.php
 smarty_work/*

@@ -16,7 +16,7 @@ class TalkApi extends BaseApi
 
 	function handle()
 	{
-		$this->format = 'txt';
+		//$this->format = 'txt';
 		
 		$core = new TalkApiCore();
 		$core->init();

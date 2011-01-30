@@ -40,8 +40,8 @@ fclose( $fin );
 $state->saveMatrix("matrix.csv");
 $state->saveText2id("text.csv");
 */
-$state->loadMatrix("matrix.csv");
-$state->loadText2id("text.csv");
+$state->loadMatrix( VOLATILE_MATRIX );
+$state->loadText2id( VOLATILE_TEXT );
 
 print $state->getnerate();
 ?>

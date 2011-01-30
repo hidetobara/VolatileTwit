@@ -1,11 +1,12 @@
 <?php
 require_once( "../../configure.php" );
-require_once( INCLUDE_DIR . "keywords/KeywordsAnalyze.class.php" );
-require_once( INCLUDE_DIR . "keywords/mecab.class.php" );
+
+require_once( INCLUDE_DIR . "web/BaseApi.class.php" );
+require_once( INCLUDE_DIR . "keywords/KeywordAnalyze.class.php" );
+require_once( INCLUDE_DIR . "keywords/mecab.function.php" );
 require_once( INCLUDE_DIR . "learn/Ipca.class.php" );
 require_once( INCLUDE_DIR . "learn/IpcaImage.class.php" );
-require_once( INCLUDE_DIR . "keywords/KeywordAnalyze.class.php" );
-require_once( INCLUDE_DIR . "web/BaseApi.class.php" );
+
 
 
 class EvaluateApi extends BaseApi
@@ -40,7 +41,8 @@ class EvaluateApi extends BaseApi
 //		$ipca->load();
 //		$ipca->project( $img->data, $vec );
 //		$ipca->backProject( $vec, $res->data, array(0,1,2) );	var_dump($res->data);
-		
+
+		$ipca->load(1);
 		$ipca->reflectProject( $img->data, $res->data, 1 );
 		
 		$rating = $res->data[1] * self::RATING_BIAS;

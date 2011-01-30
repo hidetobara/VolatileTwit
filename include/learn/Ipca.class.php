@@ -10,13 +10,15 @@ class Ipca
 	protected $reflect = array();
 	protected $reflectNormal;
 	
-	function load()
+	function load( $max=0 )
 	{
+		if( !$max ) $max = self::MAIN_MAX;
+		
 		$path = IPCA_MAIN_BIN;
 		if( !is_file($path) ) return;
 		
 		$f = fopen( $path, "rb" );
-		for( $m = 0; $m < self::MAIN_MAX; $m++ )
+		for( $m = 0; $m < $max; $m++ )
 		{
 			$line = fread( $f, self::ITEM_LENGTH*4 );
 			$cells = unpack( "f*", $line );
@@ -74,35 +76,24 @@ class Ipca
 	}
 	
 	function reflectProject( &$img, &$res, $t )
-	{
-		$this->makeReflectNormal();
-	
+	{	
 		$line = $this->loadReflect( $t );
 		if( !is_array($line) )
 		{
-			$line = array();
-			for( $i = 0; $i < self::ITEM_LENGTH; $i++ )
-			{
-				$amt = 0.0;
-				for( $m = 0; $m < self::MAIN_MAX; $m++ )
-				{
-					$amt += $nrm[ $m ] * $this->mains[ $m ][ $t ] * $this->mains[ $m ][ $i ];
-				}
-				$line[ $i ] = $amt;
-			}
+			$this->setupReflectNormal();
+			$line = $this->makeReflectLine();
 			$this->saveReflect( $line, $t );
 		}
 
-		//$amt = $this->mains[ 0 ][ $t ];//これだけのためにmainを読み込むのはコストが高い
-		$amt = 0.0;
+		$amt = $this->mains[ 0 ][ $t ];
 		for( $i = 0; $i < self::ITEM_LENGTH; $i++ )
 		{
 			$amt += $line[ $i ] * ($img[ $i ] - $this->mains[ 0 ][ $i ]);
 		}
 		$res[ $t ] = $amt;
 	}
-	
-	function makeReflectNormal($remake=false)
+		
+	function setupReflectNormal($remake=false)
 	{
 		if( !$remake && $this->reflectNormal ) return;
 		
@@ -119,9 +110,25 @@ class Ipca
 			else $this->reflectNormal[ $m ] = 0.0;
 		}	
 	}
+	
+	function makeReflectLine()
+	{
+		$line = array();
+		for( $i = 0; $i < self::ITEM_LENGTH; $i++ )
+		{
+			$amt = 0.0;
+			for( $m = 0; $m < self::MAIN_MAX; $m++ )
+			{
+				$amt += $this->reflectNormal[ $m ] * $this->mains[ $m ][ $t ] * $this->mains[ $m ][ $i ];
+			}
+			$line[ $i ] = $amt;
+		}
+		return $line;		
+	}
+	
 	function saveReflect( Array $line, $target )
 	{
-		$path = sprintf( "%sdata/reflect_%d.csv", TMP_DIR, $target );
+		$path = sprintf( IPCA_REFLECT, $target );
 		$fout = fopen( $path, "w" );
 		foreach( $line as $index => $value )
 		{
@@ -130,9 +137,10 @@ class Ipca
 		}
 		fclose( $fout );
 	}
+	
 	function loadReflect( $target )
 	{
-		$path = sprintf( "%sdata/reflect_%d.csv", TMP_DIR, $target );
+		$path = sprintf( IPCA_REFLECT, $target );
 		if( !is_file($path) ) return null;
 		
 		$fin = fopen( $path, "r" );		

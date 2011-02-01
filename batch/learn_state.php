@@ -1,6 +1,6 @@
 <?php
 require_once( "../configure.php" );
-require_once( INCLUDE_DIR . "keywords/BlockState.class.php" );
+require_once( INCLUDE_DIR . "learn/BlockState.class.php" );
 
 $state = new BlockState();
 /*

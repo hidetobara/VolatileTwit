@@ -1,5 +1,4 @@
 <?php
-require_once( 'Log.php' );
 require_once( INCLUDE_DIR . "twitter/twitteroauth.php" );
 
 

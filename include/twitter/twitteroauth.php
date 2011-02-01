@@ -11,7 +11,7 @@
  */
 
 /* Load OAuth lib. You can find it at http://oauth.net */
-require_once( INCLUDE_DIR . "twitteroauth/OAuth.php" );
+require_once( INCLUDE_DIR . "twitter/OAuth.php" );
 
 /**
  * Twitter OAuth class

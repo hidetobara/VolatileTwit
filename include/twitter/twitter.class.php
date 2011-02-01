@@ -1,6 +1,6 @@
 <?php
 require_once( 'Log.php' );
-require_once( INCLUDE_DIR . "twitteroauth/twitteroauth.php" );
+require_once( INCLUDE_DIR . "twitter/twitteroauth.php" );
 
 
 class TwitterStorage

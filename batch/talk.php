@@ -1,7 +1,8 @@
 <?php
+ini_set( 'display_errors', 1 );
 require_once( '../configure.php' );
 
-require_once( INCLUDE_DIR . "twitteroauth/twitter.class.php" );
+require_once( INCLUDE_DIR . "twitter/twitter.class.php" );
 require_once( INCLUDE_DIR . "learn/TalkManager.class.php" );
 
 
@@ -39,7 +40,6 @@ class TryTalk
 		var_dump($response);
 	}
 }
-
 $try = new TryTalk();
 $try->run();
 ?>

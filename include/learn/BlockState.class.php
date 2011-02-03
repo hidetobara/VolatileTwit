@@ -71,7 +71,7 @@ class BlockState
 				if( $life <= 0 )
 				{
 					$now = $next;
-					$context .= $this->id2text[ $now ];	//var_dump(array($now,$context));
+					$context .= $this->modifyWord( $this->id2text[ $now ] );
 					break;
 				}
 			}
@@ -79,6 +79,12 @@ class BlockState
 			if( $now == Block::TAIL ) break;
 		}
 		return $context;
+	}
+
+	private function modifyWord( $word )
+	{
+		if( mb_ereg('\w+$', $word) ) $word .= " ";
+		return $word;
 	}
 	
 	function saveMatrix( $path )

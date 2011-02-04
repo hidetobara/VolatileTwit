@@ -36,7 +36,7 @@ class TryTalk
 		}
 		
 		$options = array( 'status' => $best['text'] );
-//		$response = $this->oauth->post( self::URL_UPDATE_STATUS, $options );
+		$response = $this->oauth->post( self::URL_UPDATE_STATUS, $options );
 		var_dump(array($options,$response));
 	}
 }

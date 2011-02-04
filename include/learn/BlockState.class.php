@@ -83,7 +83,7 @@ class BlockState
 
 	private function modifyWord( $word )
 	{
-		if( mb_ereg('\w+$', $word) ) $word .= " ";
+		if( mb_ereg('[_a-zA-Z0-9]+$', $word) ) $word .= " ";
 		return $word;
 	}
 	

@@ -7,27 +7,39 @@ require_once( INCLUDE_DIR . "learn/TalkManager.class.php" );
 
 class TalkApi extends BaseApi
 {
-	const TALK_COUNT = 3;
-
 	function handle()
-	{
-		//$this->format = 'txt';
-		
-		$manager = new TalkManager();
-		$manager->init();
-		
-		$best = array( 'text' => 'にゃーん。', 'rate' => 0.0 );
-		for( $c = 0; $c < self::TALK_COUNT; $c++ )
-		{
-			$talk = $manager->talk();
-			if( $talk['rate'] > $best['rate'] ) $best = $talk;
-		}
+	{		
+		$talker = new TalkManager();
+		$best = $talker->bestTalk();
 		
 		$this->assign( 'text', $best['text'] );
 		$this->assign( 'status', 'ok' );
 	}
 }
 
-$api = new TalkApi();
-$api->run();
+if( $_REQUEST['help'] )
+{
+?>
+	<html>
+	<body>
+		<div>概要
+			<ul>
+				<li>星一のつぶやきをします。</li>
+				<li>負荷対策のため、つぶやきの結果は３０分キャッシュします。</li>
+			</ul>
+		</div>
+		<div>リクエスト・パラメータ
+			<ul>
+				<li>help: ヘルプを表示します。</li>
+			</ul>
+		</div>
+	</body>
+	</html>
+<?php
+}
+else
+{
+	$api = new TalkApi();
+	$api->run();
+}
 ?>

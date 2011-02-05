@@ -1,4 +1,5 @@
 <?php
+require_once( INCLUDE_DIR . "DB/FileCache.class.php" );
 require_once( INCLUDE_DIR . "keywords/KeywordAnalyze.class.php" );
 require_once( INCLUDE_DIR . "keywords/mecab.function.php" );
 require_once( INCLUDE_DIR . "learn/Ipca.class.php" );
@@ -8,13 +9,20 @@ require_once( INCLUDE_DIR . "learn/BlockState.class.php" );
 
 class TalkManager
 {
+	const CACHE_NAME = 'talk_manager_result';
+	const CACHE_TIME = '+30 minute';
+	
+	private $initialized = false;
+	
 	public $state;
 	public $analyze;
 	public $ipca;
 	public $filter;
 	
-	function init()
+	private function init()
 	{
+		if( $this->initialized ) return;
+		
 		$this->state = new BlockState();
 		$this->state->loadMatrix( VOLATILE_MATRIX );
 		$this->state->loadText2id( VOLATILE_TEXT );
@@ -27,10 +35,14 @@ class TalkManager
 		
 		$this->ipca = new Ipca();
 		$this->ipca->load( 1 );
+		
+		$this->initialized = true;
 	}
 	
-	function talk()
+	function talk( $opt=null )
 	{
+		$this->init();
+		
 		$text =  $this->state->getnerate();
 		$rate = $this->evaluate( $text );
 		return array(
@@ -51,6 +63,37 @@ class TalkManager
 		$res = new IpcaImage();
 		$this->ipca->reflectProject( $img->data, $res->data, 1 );
 		return $res->data[ 1 ];
+	}
+	
+	/*
+	 * generate best talk, using cache.
+	 * $opt['retry']: retry limit.
+	 * $opt['nocache']: not using cache, if it exist.
+	 */
+	function bestTalk( $opt=null )
+	{
+		$retry = is_numeric($opt['retry']) ? (int)$opt['retry'] : 3;
+		$cache = $opt['nocache'] ? null : new FileCache();
+		
+		if( $cache )
+		{
+			$best = $cache->get( self::CACHE_NAME );
+			if( $best ) return $best;
+		}
+		
+		$best = array( 'text' => 'にゃーん', 'rate' => 0.0 );
+		for( $c = 0; $c < $retry; $c++ )
+		{
+			$talk = $this->talk();
+			if( $talk['rate'] > $best['rate'] ) $best = $talk;
+		}
+		
+		if( $cache )
+		{
+			$cache->set( self::CACHE_NAME, $best, new DateTime( self::CACHE_TIME ) );
+		}
+		
+		return $best;
 	}
 }
 ?>

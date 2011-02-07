@@ -3,7 +3,9 @@ require_once( '../configure.php' );
 require_once( INCLUDE_DIR . "twitter/twitter.class.php" );
 require_once( INCLUDE_DIR . "DB/FileCache.class.php" );
 
-
+/*
+ * crawl and store twit.
+ */
 class BatchCrawlStatus
 {
 	const URL_GET_TIMELINE = 'http://twitter.com/statuses/friends_timeline.xml';
@@ -53,6 +55,7 @@ class BatchCrawlStatus
 		return $response;
 	}
 }
+
 $crawler = new BatchCrawlStatus();
 $crawler->run();
 ?>

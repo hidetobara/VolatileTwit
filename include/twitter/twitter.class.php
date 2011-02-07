@@ -4,11 +4,17 @@ require_once( INCLUDE_DIR . "twitter/twitteroauth.php" );
 
 class TwitterStorage
 {
+	const NAME_USER_FILE = 'twitter_user.csv';
+
+	public $lastId;
+	
 	public $listStatus;
 	public $listUser;
 	
-	function __construct()
+	function __construct( $opt=null )
 	{
+		$this->lastId = $opt['last_id'] ? $opt['last_id'] : 0;
+		
 		$this->listStatus = array();
 		$this->listUser = array();
 	}
@@ -21,12 +27,10 @@ class TwitterStorage
 			throw new Exeption( $xml->hash->error );
 		}
 		
-		$sinceId = 0;
 		foreach( $xml->status as $element )
 		{
 			$s = new TwitterStatus( $element );
 			$this->listStatus[ $s->id ] = $s;
-			if( $sinceId < $s->id ) $sinceId = $s->id;
 		}
 		ksort( $this->listStatus );
 		
@@ -34,10 +38,9 @@ class TwitterStorage
 		{
 			$this->listUser[ $status->user->id ] = $status->user;
 		}
-		return $sinceId;
 	}
 
-	function retrieveStatusFromLine( $line, $fromSid=null )
+	function retrieveStatusFromLine( $line )
 	{
 		$line = rtrim( $line );
 		$cells = mb_split( ",", $line );
@@ -58,26 +61,23 @@ class TwitterStorage
 	
 	function saveStatus()
 	{
-		$sinceId = 0;
-		
 		foreach( $this->listStatus as $sid => $status )
 		{
-			//var_dump($status);
+			if( $this->lastId && $this->lastId >= $sid ) continue;
+			
 			$path = LOG_DIR . "status/" . date("Ymd", $status->created_at) . ".log";
 			$dir = dirname( $path );
 			if( !is_dir($dir) ) mkdir( $dir, 0777, true );
-			$fp = fopen( $path, "a" );
-			fprintf( $fp, "%s,%s\n", $sid, $status->toCsv() );
-			fclose( $fp );
+			$line = sprintf( "%s,%s\n", $sid, $status->toCsv() );	//var_dump($line);
+			file_put_contents( $path, $line, FILE_APPEND );
 			
-			if( $sinceId < $status->id  ) $sinceId = $status->id;
+			$this->lastId = $sid;	//var_dump($sid);
 		}
-		return $sinceId;
 	}
 	
 	function loadUserFromFile( $path=null )
 	{
-		if( !$path ) $path = LOG_DIR . "user.csv";
+		if( !$path ) $path = LOG_DIR . self::NAME_USER_FILE;
 		if( !is_file($path) ) return;
 	
 		$fp = fopen( $path, "r" );
@@ -95,12 +95,12 @@ class TwitterStorage
 			if( !$u->id || !$u->screen_name ) continue;
 			
 			$this->listUser[ $u->id ] = $u;
-		}
+		}	var_dump(count($this->listUser));
 	}
 	
 	function saveUser( $path=null )
 	{
-		if( !$path ) $path = LOG_DIR . "user.csv";
+		if( !$path ) $path = LOG_DIR . self::NAME_USER_FILE;
 		if( count($this->listUser)==0 ) return;
 		$dir = dirname( $path );
 		if( !is_dir($dir) ) mkdir( $dir, 0777, true );
@@ -108,14 +108,13 @@ class TwitterStorage
 		ksort( $this->listUser );
 		
 		$fp = fopen( $path, "w" );
-		if( $fp )
+		if( !$fp ) return;
+		
+		foreach( $this->listUser as $uid => $user )
 		{
-			foreach( $this->listUser as $uid => $user )
-			{
-				fprintf( $fp, "%s,%s\n", $uid, $user->toCsv() );
-			}
-			fclose( $fp );
+			fprintf( $fp, "%s,%s\n", $uid, $user->toCsv() );
 		}
+		fclose( $fp );	var_dump(count($this->listUser));
 	}
 }
 
@@ -124,6 +123,8 @@ class TwitterStatus
 	public $id;
 	public $created_at;
 	public $text;
+	public $reply_to;
+	
 	public $user;// class instance
 	
 	function __construct( $a )
@@ -138,6 +139,7 @@ class TwitterStatus
 		$this->created_at = strtotime( (string)$element->created_at );
 		$this->text = (string)$element->text;
 		$this->text = mb_ereg_replace("[,\r\n]+", " ", $this->text);
+		$this->reply_to = $element->in_reply_to_status_id ? (string)$element->in_reply_to_status_id : null;
 		
 		$user = new TwitterUser( $element->user );
 		$this->user = $user;
@@ -148,6 +150,7 @@ class TwitterStatus
 		if( is_numeric($a['id']) ) $this->id = $a['id'];
 		if( is_string($a['created_at']) ) $this->created_at = strtotime( $a['created_at'] );
 		if( is_string($a['text']) ) $this->text = $a['text'];
+		if( $a['reply_to'] ) $this->reply_to = $a['reply_to'];
 		
 		$this->user = new TwitterUser( $a );
 	}
@@ -159,6 +162,7 @@ class TwitterStatus
 			. "user_id={$this->user->id},"
 			. "user_screen_name={$this->user->screen_name},"
 			. "created_at={$created},"
+			. ($this->reply_to ? "reply_to={$this->reply_to}," : "")
 			. "text={$this->text}";
 	}
 }

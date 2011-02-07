@@ -43,7 +43,11 @@ class TalkManager
 	{
 		$this->init();
 		
-		$text =  $this->state->getnerate();
+		while( true )
+		{
+			$text =  $this->state->getnerate();
+			if( !$text ) break;
+		}
 		$rate = $this->evaluate( $text );
 		return array(
 			'text' => $text,

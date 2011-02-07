@@ -10,7 +10,7 @@ class BatchCrawlStatus
 {
 	const URL_GET_TIMELINE = 'http://twitter.com/statuses/friends_timeline.xml';
 	const NAME_LAST_ID = 'crawl_status_last_id';
-	const GET_STATUS_MAX = 10;
+	const GET_STATUS_MAX = 200;
 	
 	protected $cache;
 	protected $oauth;

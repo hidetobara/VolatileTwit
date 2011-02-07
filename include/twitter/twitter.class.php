@@ -71,7 +71,7 @@ class TwitterStorage
 			$line = sprintf( "%s,%s\n", $sid, $status->toCsv() );	//var_dump($line);
 			file_put_contents( $path, $line, FILE_APPEND );
 			
-			$this->lastId = $sid;	//var_dump($sid);
+			$this->lastId = $sid;	var_dump($line);
 		}
 	}
 	
@@ -95,7 +95,7 @@ class TwitterStorage
 			if( !$u->id || !$u->screen_name ) continue;
 			
 			$this->listUser[ $u->id ] = $u;
-		}	var_dump(count($this->listUser));
+		}
 	}
 	
 	function saveUser( $path=null )
@@ -114,7 +114,7 @@ class TwitterStorage
 		{
 			fprintf( $fp, "%s,%s\n", $uid, $user->toCsv() );
 		}
-		fclose( $fp );	var_dump(count($this->listUser));
+		fclose( $fp );
 	}
 }
 

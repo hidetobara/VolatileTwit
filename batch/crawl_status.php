@@ -51,7 +51,7 @@ class BatchCrawlStatus
 		$options = array( 'count' => self::GET_STATUS_MAX );
 		//if( $this->sinceId ) $options['since_id'] = $this->sinceId;
 		$response = $this->oauth->get( self::URL_GET_TIMELINE, $options	);
-		var_dump( $response );
+		//var_dump( $response );
 		return $response;
 	}
 }

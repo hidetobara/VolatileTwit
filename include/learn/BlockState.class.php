@@ -18,6 +18,7 @@ class Block
 
 class BlockState
 {
+	const TEXT_LIMIT = 256;
 	private $splitParses = array('動詞','名詞','形容詞','形容動詞','副詞');
 	
 	protected $matrix;
@@ -75,7 +76,7 @@ class BlockState
 					break;
 				}
 			}
-			if( mb_strlen($context)>128 ) break;
+			if( mb_strlen($context) > self::TEXT_LIMIT ) break;
 			if( $now == Block::TAIL ) break;
 		}
 		return $context;

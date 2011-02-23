@@ -46,7 +46,8 @@ class TalkManager
 		while( true )
 		{
 			$text =  $this->state->getnerate();
-			if( mb_strlen($text)>0 ) break;
+			$length = mb_strlen($text);
+			if( 0 < $length && $length < 140 ) break;
 		}
 		$rate = $this->evaluate( $text );
 		return array(

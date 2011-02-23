@@ -13,7 +13,7 @@ $state->learn("女子も一番暇な人種であった");
 $state->saveMatrix("matrix.csv");
 $state->saveText2id("text.csv");
 */
-/*
+
 $path = "C:/obara/Chamomile/data/sort_cmt.gamma.csv";
 $life = 5000;
 $similarity = 0.02;
@@ -28,6 +28,7 @@ while( $line = fgets($fin) )
 
 	$context = mb_ereg_replace( "[\@\#][A-Za-z0-9_]+", "", $context );
 	$context = mb_ereg_replace( "[「」（）【】\(\)\"\']", "", $context );
+	$context = mb_ereg_replace( "//[/A-Za-z0-9\.\-\_]+", "", $context );
 
 	$state->learn( $context );
 
@@ -39,9 +40,9 @@ fclose( $fin );
 
 $state->saveMatrix("matrix.csv");
 $state->saveText2id("text.csv");
-*/
+/*
 $state->loadMatrix( VOLATILE_MATRIX );
 $state->loadText2id( VOLATILE_TEXT );
-
+*/
 print $state->getnerate();
 ?>

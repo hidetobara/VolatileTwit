@@ -1,7 +1,65 @@
 <?php
 require_once( INCLUDE_DIR . "twitter/twitteroauth.php" );
 
+/*
+ * ステータスログを読み取る
+ */
+class TwitterLog
+{
+	private $file;
+	private $line;
+	public function open($path)
+	{
+		if( !is_file($path) ) return false;
+		$this->file = gzopen( $path, "rb" );
+		$this->line = null;
+		if( !$this->file ) return false;
+		print "opend {$path}\n";
+		return true;
+	}
+	public function read1Line()
+	{
+		$this->line = gzgets($this->file);
+		if( !$this->line ) return null;
+		return $this;
+	}
+	public function getArray()
+	{
+		if( !$this->line ) return null;
+		$line = rtrim( $this->line );
+		if( preg_match('/^\s*#/', $line) ) return array();
+		
+		$cells = mb_split( ",", $line );
+		$array = array();
+		foreach( $cells as $cell )
+		{
+			$kv = mb_split( "=", $cell, 2 );
+			if(count($kv)>=2) $array[$kv[0]] = $kv[1];
+		}
+		return $array;
+	}
+	public function getArrayPassedMecab()
+	{
+		$array = $this->getArray();
+		if($array['text']) $array['mecab'] = mecab($array['text']);
+		return $array;
+	}
+	public function getStatusObject()
+	{
+		$array = $this->getArray();
+		return new TwitterStatus($array);
+	}
+	public function close()
+	{
+		gzclose($this->file);
+		$this->file = null;
+		$this->line = null;
+	}
+}
 
+/*
+ * ステータスの格納
+ */
 class TwitterStorage
 {
 	const NAME_USER_FILE = 'twitter_user.csv';
@@ -68,10 +126,10 @@ class TwitterStorage
 			$path = LOG_DIR . "status/" . date("Ymd", $status->created_at) . ".log";
 			$dir = dirname( $path );
 			if( !is_dir($dir) ) mkdir( $dir, 0777, true );
-			$line = sprintf( "%s,%s\n", $sid, $status->toCsv() );	//var_dump($line);
+			$line = sprintf( "%s,%s\n", $sid, $status->toCsv() );
 			file_put_contents( $path, $line, FILE_APPEND );
 			
-			$this->lastId = $sid;	var_dump($line);
+			$this->lastId = $sid;
 		}
 	}
 	

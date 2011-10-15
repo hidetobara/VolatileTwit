@@ -1,7 +1,7 @@
 <?php
 require_once( '../configure.php' );
 require_once( INCLUDE_DIR . "twitter/twitter.class.php" );
-require_once( INCLUDE_DIR . "DB/FileCache.class.php" );
+require_once( INCLUDE_DIR . "data/FileCache.class.php" );
 
 /*
  * crawl and store twit.

@@ -1,5 +1,5 @@
 <?php
-require_once( INCLUDE_DIR . "DB/FileCache.class.php" );
+require_once( INCLUDE_DIR . "data/FileCache.class.php" );
 require_once( INCLUDE_DIR . "keywords/KeywordAnalyze.class.php" );
 require_once( INCLUDE_DIR . "keywords/mecab.function.php" );
 require_once( INCLUDE_DIR . "learn/Ipca.class.php" );

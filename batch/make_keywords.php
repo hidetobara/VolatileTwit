@@ -1,12 +1,13 @@
 <?php
 require_once( '../configure.php' );
+require_once( CONF_DIR . 'path.php' );
 require_once( INCLUDE_DIR . 'keywords/KeywordsTable.class.php' );
 require_once( INCLUDE_DIR . 'twitter/twitter.class.php' );
 
 
 $table = new KeywordsTable();
 $loader = new TwitterLog();
-foreach( glob( LOG_DIR . "status/*.log.gz" ) as $path )
+foreach( glob( ConfPath::rawStatusList() ) as $path )
 {
 	$loader->open($path);
 	while( $loader->read1Line() )
@@ -17,5 +18,5 @@ foreach( glob( LOG_DIR . "status/*.log.gz" ) as $path )
 	$loader->close();
 	break;
 }
-$table->saveTable( DATA_DIR . 'keywords.delta.csv' );
+$table->saveTable( ConfPath::keywords() );
 ?>

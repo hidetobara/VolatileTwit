@@ -8,6 +8,8 @@ class TwitterLog
 {
 	private $file;
 	private $line;
+	public $count = 0;
+	
 	public function open($path)
 	{
 		if( !is_file($path) ) return false;
@@ -21,6 +23,7 @@ class TwitterLog
 	{
 		$this->line = gzgets($this->file);
 		if( !$this->line ) return null;
+		$this->count++;
 		return $this;
 	}
 	public function getArray()

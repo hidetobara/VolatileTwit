@@ -15,7 +15,11 @@ class Ipca
 		if( !$max ) $max = self::MAIN_MAX;
 		
 		$path = IPCA_MAIN_BIN;
-		if( !is_file($path) ) return;
+		if( !is_file($path) )
+		{
+			print "Warn ! The file is not found: {$path}\n";
+			return;
+		}
 		
 		$f = fopen( $path, "rb" );
 		for( $m = 0; $m < $max; $m++ )
@@ -81,7 +85,7 @@ class Ipca
 		if( !is_array($line) )
 		{
 			$this->setupReflectNormal();
-			$line = $this->makeReflectLine();
+			$line = $this->makeReflectLine( $t );
 			$this->saveReflect( $line, $t );
 		}
 
@@ -93,10 +97,10 @@ class Ipca
 		$res[ $t ] = $amt;
 	}
 		
-	function setupReflectNormal($remake=false)
+	function setupReflectNormal()
 	{
-		if( !$remake && $this->reflectNormal ) return;
-		
+		if( $this->reflectNormal ) return;
+
 		$this->reflectNormal = array(1.0);
 		for( $m = 1; $m < self::MAIN_MAX; $m++ )
 		{
@@ -106,12 +110,13 @@ class Ipca
 			{
 				$amt += $pM[ $i ] * $pM[ $i ];
 			}
+
 			if( $amt > 0.0 ) $this->reflectNormal[ $m ] = 1.0 / $amt;
 			else $this->reflectNormal[ $m ] = 0.0;
 		}	
 	}
 	
-	function makeReflectLine()
+	function makeReflectLine( $target )
 	{
 		$line = array();
 		for( $i = 0; $i < self::ITEM_LENGTH; $i++ )
@@ -119,16 +124,16 @@ class Ipca
 			$amt = 0.0;
 			for( $m = 0; $m < self::MAIN_MAX; $m++ )
 			{
-				$amt += $this->reflectNormal[ $m ] * $this->mains[ $m ][ $t ] * $this->mains[ $m ][ $i ];
+				$amt += $this->reflectNormal[ $m ] * $this->mains[ $m ][ $target ] * $this->mains[ $m ][ $i ];
 			}
 			$line[ $i ] = $amt;
 		}
-		return $line;		
+		return $line;
 	}
 	
 	function saveReflect( Array $line, $target )
 	{
-		$path = sprintf( IPCA_REFLECT, $target );
+		$path = ConfPath::reflectUser( $target );
 		$fout = fopen( $path, "w" );
 		foreach( $line as $index => $value )
 		{
@@ -140,7 +145,7 @@ class Ipca
 	
 	function loadReflect( $target )
 	{
-		$path = sprintf( IPCA_REFLECT, $target );
+		$path = ConfPath::reflectUser( $target );
 		if( !is_file($path) ) return null;
 		
 		$fin = fopen( $path, "r" );		

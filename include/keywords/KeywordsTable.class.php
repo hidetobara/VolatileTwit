@@ -9,7 +9,7 @@ class KeywordsTable
 	function __construct( $opt=null )
 	{
 		$this->m_Table = array();
-		if( $opt['PathKeywords'] ) $this->build( $opt['PathKeywords'] );
+		if( $opt['PathKeywords'] ) $this->loadTable( $opt['PathKeywords'] );
 	}
 	
 	function addRecordByMecab( $mecab )
@@ -74,7 +74,7 @@ class KeywordsTable
 			$this->m_Table[ $word ] = $items;
 		}
 		fclose( $f );
-		printf( "Keywords table(%s) loaded\n", $path );
+		if(ENV_TYPE != 'RELEASE') printf( "Keywords table(%s) loaded\n", $path );
 	}
 	
 	function addKeywordIntoMecabInfo( $mecab, $targets=null )

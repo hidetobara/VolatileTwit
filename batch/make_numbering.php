@@ -10,7 +10,7 @@ class Numbering
 	public function open($path)
 	{
 		$this->file = fopen( $path, "w" );
-		fprintf( $this->file, "#sid,uid,reply_to,keywords...\n");
+		//fprintf( $this->file, "#sid,uid,reply_to,keywords...\n");
 	}
 	public function write1Line( $info, $mecab )
 	{
@@ -30,11 +30,11 @@ class Numbering
 }
 
 $table = new KeywordsTable();
-$table->loadTable( DATA_DIR . 'keywords.delta.csv' );
+$table->loadTable( ConfPath::keywords() );
 $loader = new TwitterLog();
 $numbering = new Numbering();
-$numbering->open( DATA_DIR . 'status_list.delta.csv' );
-foreach( glob( LOG_DIR . "status/*.log.gz" ) as $path )
+$numbering->open( ConfPath::statusList() );
+foreach( glob( ConfPath::rawStatusList() ) as $path )
 {
 	$loader->open($path);
 	while( $loader->read1Line() )
@@ -44,7 +44,6 @@ foreach( glob( LOG_DIR . "status/*.log.gz" ) as $path )
 		$numbering->write1Line($info, $mecab);
 	}
 	$loader->close();
-	break;
 }
 $numbering->close();
 ?>

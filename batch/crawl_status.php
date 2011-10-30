@@ -21,8 +21,8 @@ class BatchCrawlStatus
 		$this->oauth = new TwitterOAuth(
 			CONSUMER_KEY,
 			CONSUMER_SECRET,
-			OAUTH_KEY,
-			OAUTH_SECRET
+			HAJIME_OAUTH_KEY,
+			HAJIME_OAUTH_SECRET
 			);			
 	}
 
@@ -42,12 +42,6 @@ class BatchCrawlStatus
 	
 	function getRecentStatus()
 	{
-		$this->oauth = new TwitterOAuth(
-			CONSUMER_KEY,
-			CONSUMER_SECRET,
-			OAUTH_KEY,
-			OAUTH_SECRET
-			);
 		$options = array( 'count' => self::GET_STATUS_MAX );
 		//if( $this->sinceId ) $options['since_id'] = $this->sinceId;
 		$response = $this->oauth->get( self::URL_GET_TIMELINE, $options	);

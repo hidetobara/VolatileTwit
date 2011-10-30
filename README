@@ -2,3 +2,11 @@
 Sorry, Japanese only.
 
 とある人になりすますボットです。
+PCA のコードは、別プロジェクト（C++）のため入っていません。
+
+1. make_keywords: 番号と単語がペアの辞書を生成する
+2. make_numbering: 辞書からツイートを番号に置き換える
+3. mark_numbering: 特定のユーザのツイートに特別な番号を付ける
+4. make_filter: 単語の発言頻度などから、単語の重みを計算する
+5. (ipca)
+6. score_logs: 各ユーザのツイートを評価する

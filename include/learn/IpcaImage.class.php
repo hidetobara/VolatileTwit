@@ -16,7 +16,7 @@ class IpcaImage
 	{
 		foreach( $mecab as $item )
 		{
-			$index = $item[ 'index' ];
+			$index = $item[ 'keyword' ];
 			if( !$index ) continue;
 			$this->data[ $index ] = 1.0;
 		}

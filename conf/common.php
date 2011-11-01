@@ -34,5 +34,5 @@ define( 'VOLATILE_TEXT', DATA_DIR . 'volatile_text.csv' );
 
 mb_regex_encoding( "UTF-8" );
 
-require_once( CONF_DIR . 'cecret.php' );
+require_once( CONF_DIR . 'secret.php' );
 ?>

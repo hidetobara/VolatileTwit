@@ -4,6 +4,8 @@ log/*
 tmp/*
 data/*
 batch/*.log
-conf/cecret.php
+conf/secret.php
 conf/local.php
 smarty_work/*
+
+!/.gitignore

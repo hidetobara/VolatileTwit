@@ -1,5 +1,6 @@
 <?php
 require_once( CONF_DIR . 'path.php' );
+require_once( CONF_DIR . 'secret.php' );
 require_once( INCLUDE_DIR . "twitter/twitter.class.php" );
 require_once( INCLUDE_DIR . "keywords/KeywordsTable.class.php" );
 require_once( INCLUDE_DIR . "keywords/mecab.function.php" );
@@ -12,10 +13,11 @@ require_once( INCLUDE_DIR . "learn/BlockState.class.php" );
  */
 abstract class VolatileTwitBase
 {
-	const URL_UPDATE_STATUS = "http://api.twitter.com/statuses/update.xml";
-	
-	protected $consumerKey = 'up3hbQ1q72R9hY8lZHkDiA';
-	protected $consumerSecret = 'WTWBLeytOJeE1PaojFFe59dLBRd8jW8dEk6hkUoQxc';
+	const URL_UPDATE_STATUS = 'http://api.twitter.com/1/statuses/update.xml';
+	const URL_GET_TIMELINE = 'http://api.twitter.com/1/statuses/home_timeline.xml';
+
+	protected $consumerKey = CONSUMER_KEY;
+	protected $consumerSecret = CONSUMER_SECRET;
 	protected $userKey;
 	protected $userSecret;
 
@@ -38,8 +40,14 @@ abstract class VolatileTwitBase
 	protected function postTalk($text)
 	{
 		$options = array( 'status' => $text );
-//		$response = $this->twitterApi->post( self::URL_UPDATE_STATUS, $options );
+		$response = $this->twitterApi->post( self::URL_UPDATE_STATUS, $options );
 		var_dump(array($options,$response));
+	}
+	protected function getTimeline()
+	{
+		$options = array( 'count' => 3, 'include_rts' => false );
+		$response = $this->twitterApi->get( self::URL_GET_TIMELINE, $options );
+		var_dump( $response );
 	}
 	
 	protected $initialized = false;
@@ -96,7 +104,7 @@ abstract class VolatileTwitBase
 	/*
 	 * generate best talk.
 	 */
-	protected function bestTalk()
+	protected function bestTalkInfo()
 	{
 		$best = array( 'text' => $this->defaultTalk, 'rate' => 0.0 );
 		for( $c = 0; $c < $this->retry; $c++ )

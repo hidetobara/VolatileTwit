@@ -28,9 +28,6 @@ define( 'TMP_DIR', ROOT_DIR . 'tmp/' );
 define( 'SMARTY_WORK_DIR', ROOT_DIR . 'smarty_work/' );
 define( 'SMARTY_TEMPLATE_DIR', ROOT_DIR . 'smarty/' );
 
-define( 'VOLATILE_MATRIX', DATA_DIR . 'volatile_matrix.csv' );
-define( 'VOLATILE_TEXT', DATA_DIR . 'volatile_text.csv' );
-
 
 mb_regex_encoding( "UTF-8" );
 

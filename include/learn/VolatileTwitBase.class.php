@@ -37,17 +37,16 @@ abstract class VolatileTwitBase
 			$this->userKey,
 			$this->userSecret );
 	}
-	protected function postTalk($text)
+	protected function postTalk( array $info )
 	{
-		$options = array( 'status' => $text );
+		$options = array( 'status' => $info['text'] );
 		$response = $this->twitterApi->post( self::URL_UPDATE_STATUS, $options );
-		var_dump(array($options,$response));
+		var_dump(array($info,$response));
 	}
 	protected function getTimeline()
 	{
 		$options = array( 'count' => 3, 'include_rts' => false );
 		$response = $this->twitterApi->get( self::URL_GET_TIMELINE, $options );
-		var_dump( $response );
 	}
 	
 	protected $initialized = false;

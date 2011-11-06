@@ -19,10 +19,11 @@ class VolatileTwitShokos extends VolatileTwitBase
 	
 	function isTrigered()
 	{
-		return true;
+		$hoursHit = array(11,13,15,17,19,21);
+
 		$hour = date("H");
 		$minute = date("i");
-		if( $hour%3==0 && floor($minute/10)==0 ) return true;
+		if( in_array($hour,$hoursHit) && floor($minute/10)==0 ) return true;
 		return false;
 	}
 	
@@ -31,6 +32,6 @@ class VolatileTwitShokos extends VolatileTwitBase
 		if( !$this->isTrigered() ) return;
 		
 		$info = $this->bestTalkInfo();
-		$this->postTalk($info['text']);
+		$this->postTalk($info);
 	}
 }

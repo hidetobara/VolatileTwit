@@ -40,5 +40,10 @@ class ConfPath
 	{
 		return sprintf("%sstate_texts.%s.csv", DATA_DIR, $name);
 	}
+	
+	static function ipcaBin()
+	{
+		return ROOT_DIR . 'data/ipcaMain.bin';
+	}
 }
 ?>

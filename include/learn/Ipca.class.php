@@ -1,4 +1,6 @@
 <?php
+require_once( CONF_DIR . 'path.php' );
+
 /*
  * Incremental PCA
  */
@@ -14,7 +16,7 @@ class Ipca
 	{
 		if( !$max ) $max = self::MAIN_MAX;
 		
-		$path = IPCA_MAIN_BIN;
+		$path = ConfPath::ipcaBin();
 		if( !is_file($path) )
 		{
 			print "Warn ! The file is not found: {$path}\n";

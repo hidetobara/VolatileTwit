@@ -21,7 +21,7 @@ class VolatileTwitHajime extends VolatileTwitBase
 	{
 		$hour = date("H");
 		$minute = date("i");
-		if( $hour%2==0 && abs($minute/10)==3 ) return true;
+		if( $hour%2==0 && floor($minute/10)==3 ) return true;
 		return false;
 	}
 	
@@ -29,7 +29,7 @@ class VolatileTwitHajime extends VolatileTwitBase
 	{
 		if( !$this->isTrigered() ) return;
 		
-		$text = $this->bestTalk();
-		$this->postTalk($text);
+		$info = $this->bestTalkInfo();
+		$this->postTalk($info);
 	}
 }

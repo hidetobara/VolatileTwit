@@ -21,7 +21,7 @@ class VolatileTwitShokos extends VolatileTwitBase
 	{
 		$hoursHit = array(11,13,15,17,19,21);
 
-		$hour = date("H");
+		$hour = date("G");
 		$minute = date("i");
 		if( in_array($hour,$hoursHit) && floor($minute/10)==0 ) return true;
 		return false;

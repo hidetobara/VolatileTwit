@@ -23,7 +23,7 @@ abstract class VolatileTwitBase
 
 	protected $target;
 	protected $name;
-	protected $retry = 3;
+	protected $retry = 4;
 	protected $defaultTalk;
 	
 	abstract function run();

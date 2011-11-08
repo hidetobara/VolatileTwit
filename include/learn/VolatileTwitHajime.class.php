@@ -19,9 +19,11 @@ class VolatileTwitHajime extends VolatileTwitBase
 	
 	function isTrigered()
 	{
-		$hour = date("H");
+		$hoursHit = array(0,10,12,14,16,18,20,22);
+		
+		$hour = date("G");
 		$minute = date("i");
-		if( $hour%2==0 && floor($minute/10)==3 ) return true;
+		if( in_array($hour,$hoursHit) && floor($minute/10)==3 ) return true;
 		return false;
 	}
 	

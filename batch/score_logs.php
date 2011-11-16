@@ -19,7 +19,7 @@ class ScoreLogs
 	
 	function __construct()
 	{
-		$this->ipca = new Ipca();
+		$this->ipca = Ipca::singleton();
 		$this->ipca->load();
 	}
 	
@@ -81,7 +81,7 @@ for( $i=1; $argv[$i]; $i++ ) $users[] = $argv[$i];
 //$users = array(4029081);//hajimehoshi
 $users = array(19187659);//shokos
 
-$table = new KeywordsTable();
+$table = KeywordsTable::singleton();
 $table->loadTable( ConfPath::keywords() );
 $loader = new TwitterLog();
 $score = new ScoreLogs();

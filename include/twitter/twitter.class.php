@@ -16,7 +16,7 @@ class TwitterLog
 		$this->file = gzopen( $path, "rb" );
 		$this->line = null;
 		if( !$this->file ) return false;
-		print "opend {$path}\n";
+		print "\topend {$path}\n";
 		return true;
 	}
 	public function read1Line()
@@ -92,6 +92,7 @@ class TwitterStorage
 		{
 			$s = new TwitterStatus( $element );
 			$this->listStatus[ $s->id ] = $s;
+			if( !$this->lastId || $this->lastId < $s->id ) $this->lastId = $s->id;
 		}
 		ksort( $this->listStatus );
 		
@@ -117,15 +118,25 @@ class TwitterStorage
 		$u = $this->listUser[ $s->user->id ];
 		if( $u ) $s->user = $u;
 		$this->listStatus[ $s->id ] = $s;
+		if( !$this->lastId || $this->lastId < $s->id ) $this->lastId = $s->id;
 		return $s;
+	}
+	
+	function getNewStatusList()
+	{
+		$list = array();
+		foreach( $this->listStatus as $sid => $status )
+		{
+			if( $this->lastId && $this->lastId >= $sid ) continue;
+			$list[ $sid ] = $status;
+		}
+		return $list;
 	}
 	
 	function saveStatus()
 	{
-		foreach( $this->listStatus as $sid => $status )
+		foreach( $this->getNewStatusList() as $sid => $status )
 		{
-			if( $this->lastId && $this->lastId >= $sid ) continue;
-			
 			$path = LOG_DIR . "status/" . date("Ymd", $status->created_at) . ".log";
 			$dir = dirname( $path );
 			if( !is_dir($dir) ) mkdir( $dir, 0777, true );

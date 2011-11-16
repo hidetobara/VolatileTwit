@@ -174,12 +174,10 @@ class BlockState
 			{
 				$blocks[] = $block;
 				$block = new Block(Block::WORDS);
-//				$block->words[] = $word;
 				$block->text = $word['origin'];
  			}
  			else
  			{
-//				$block->words[] = $word;
  				$block->text .= $word['origin'];
  			}
 		}

@@ -29,7 +29,7 @@ class Numbering
 	}
 }
 
-$table = new KeywordsTable();
+$table = KeywordsTable::singleton();
 $table->loadTable( ConfPath::keywords() );
 $loader = new TwitterLog();
 $numbering = new Numbering();

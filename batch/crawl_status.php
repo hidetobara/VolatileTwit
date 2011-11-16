@@ -21,8 +21,8 @@ class BatchCrawlStatus
 		$this->oauth = new TwitterOAuth(
 			CONSUMER_KEY,
 			CONSUMER_SECRET,
-			HAJIME_OAUTH_KEY,
-			HAJIME_OAUTH_SECRET
+			HIDETOBARA_OAUTH_KEY,
+			HIDETOBARA_OAUTH_SECRET
 			);			
 	}
 

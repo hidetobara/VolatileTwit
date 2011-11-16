@@ -12,6 +12,13 @@ class Ipca
 	protected $reflect = array();
 	protected $reflectNormal;
 	
+	protected static $Instance = null;
+	static function singleton()
+	{
+		if( !self::$Instance ) self::$Instance = new self();
+		return self::$Instance;
+	}
+	
 	function load( $max=0 )
 	{
 		if( !$max ) $max = self::MAIN_MAX;

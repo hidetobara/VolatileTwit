@@ -10,7 +10,7 @@ class MakeFilter
 	
 	function __construct( $options=null )
 	{
-		$this->m_Keywords = $options['Keywords'] ? $options['Keywords'] : new KeywordsTable( $options );
+		$this->m_Keywords = $options['Keywords'] ? $options['Keywords'] : KeywordsTable::singleton($options);
 	}
 
 	private function isIgnored( $record )
@@ -46,7 +46,7 @@ class MakeFilter
 		fclose( $f );
 	}
 }
-$keywords = new KeywordsTable();
+$keywords = KeywordsTable::singleton();
 $keywords->loadTable( ConfPath::keywords() );
 $instance = new MakeFilter( array('Keywords'=>$keywords) );
 $instance->run_idf( ConfPath::keywordsFilter() );

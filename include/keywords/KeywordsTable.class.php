@@ -6,11 +6,18 @@ class KeywordsTable
 	const KEYWORD_OFFSET = 100;
 	public $m_Table;
 	
-	function __construct( $opt=null )
+	protected static $Instance = null;
+	static function singleton( $opt=null )
+	{
+		if( !self::$Instance ) self::$Instance = new self( $opt );
+		return self::$Instance;
+	}
+	
+	protected function __construct( $opt=null )
 	{
 		$this->m_Table = array();
 		if( $opt['PathKeywords'] ) $this->loadTable( $opt['PathKeywords'] );
-	}
+	}	
 	
 	function addRecordByMecab( $mecab )
 	{

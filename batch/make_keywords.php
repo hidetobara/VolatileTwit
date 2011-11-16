@@ -5,7 +5,7 @@ require_once( INCLUDE_DIR . 'keywords/KeywordsTable.class.php' );
 require_once( INCLUDE_DIR . 'twitter/twitter.class.php' );
 
 
-$table = new KeywordsTable();
+$table = KeywordsTable::singleton();
 $loader = new TwitterLog();
 foreach( glob( ConfPath::rawStatusList() ) as $path )
 {

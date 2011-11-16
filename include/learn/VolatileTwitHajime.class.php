@@ -17,7 +17,18 @@ class VolatileTwitHajime extends VolatileTwitBase
 		$this->initLearn();
 	}
 	
-	function isTrigered()
+	function run()
+	{
+		$this->reply();
+		
+		if( $this->isTrigered() )
+		{
+			$info = $this->bestTalkInfo();
+			$this->postTalk($info);
+		}
+	}
+	
+	private function isTrigered()
 	{
 		$hoursHit = array(0,10,12,14,16,18,20,22);
 		
@@ -27,11 +38,27 @@ class VolatileTwitHajime extends VolatileTwitBase
 		return false;
 	}
 	
-	function run()
+	private function reply()
 	{
-		if( !$this->isTrigered() ) return;
+		$specials = array('hajimehoshi','shokos','shok0s','hidetobara');
 		
-		$info = $this->bestTalkInfo();
-		$this->postTalk($info);
+		$generator = new ReplyState($this->name);
+		$generator->load();
+		
+		$storage = $this->getTimeline();
+		foreach( $storage->getNewStatusList() as $status )
+		{
+			if( in_array($status->user->screen_name,$specials) || rand(0,100)<10 )
+			{
+				$best = $generator->generate($status->text);
+				if( $best['to'] )
+				{
+					$best['text'] = "@".$status->user->screen_name." ".$best['to'];
+					$best['reply_to'] = $status->id;
+					$this->postTalk($best);
+					break;
+				}
+			}
+		}
 	}
 }

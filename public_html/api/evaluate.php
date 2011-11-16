@@ -36,12 +36,10 @@ class EvaluateApi extends BaseApi
 		$img->mul( $filter );
 
 		$res = new IpcaImage();
-		$ipca = new Ipca();
-		
+		$ipca = Ipca::singleton();
 //		$ipca->load();
 //		$ipca->project( $img->data, $vec );
-//		$ipca->backProject( $vec, $res->data, array(0,1,2) );	var_dump($res->data);
-
+//		$ipca->backProject( $vec, $res->data, array(0,1,2) );
 		$ipca->load(1);
 		$ipca->reflectProject( $img->data, $res->data, 1 );
 		

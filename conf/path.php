@@ -5,7 +5,7 @@ class ConfPath
 
 	static function rawStatusList()
 	{
-		return sprintf("%sstatus/*.log.gz", LOG_DIR);
+		return sprintf("%sstatus/2011*.log.gz", LOG_DIR);
 	}
 	static function keywords()
 	{
@@ -39,6 +39,11 @@ class ConfPath
 	static function stateTexts( $name )
 	{
 		return sprintf("%sstate_texts.%s.csv", DATA_DIR, $name);
+	}
+	
+	static function replyList( $name )
+	{
+		return sprintf("%sreply_score.%s.csv", DATA_DIR, $name);
 	}
 	
 	static function ipcaBin()

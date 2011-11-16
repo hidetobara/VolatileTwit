@@ -19,7 +19,7 @@ class VolatileTwitHajime extends VolatileTwitBase
 	
 	function run()
 	{
-		$this->reply();
+		//$this->reply();
 		
 		if( $this->isTrigered() )
 		{

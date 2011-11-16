@@ -22,6 +22,7 @@ class Ipca
 	function load( $max=0 )
 	{
 		if( !$max ) $max = self::MAIN_MAX;
+		if( count($this->mains) == $max ) return;
 		
 		$path = ConfPath::ipcaBin();
 		if( !is_file($path) )
@@ -37,6 +38,7 @@ class Ipca
 			$cells = unpack( "f*", $line );
 			$this->mains[ $m ] = array_slice( $cells, 0 );
 		}
+		flose($f);
 	}
 	
 	function project( &$img, &$vec )

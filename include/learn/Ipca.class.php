@@ -38,7 +38,7 @@ class Ipca
 			$cells = unpack( "f*", $line );
 			$this->mains[ $m ] = array_slice( $cells, 0 );
 		}
-		flose($f);
+		fclose($f);
 	}
 	
 	function project( &$img, &$vec )

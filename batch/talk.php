@@ -8,7 +8,7 @@ require_once( INCLUDE_DIR . "learn/VolatileTwitShokos.class.php" );
 $hajime = new VolatileTwitHajime();
 $hajime->run();
 unset($hajime);
-exit;
+
 $shokos = new VolatileTwitShokos();
 $shokos->run();
 unset($shokos);

@@ -52,7 +52,8 @@ class VolatileTwitHajime extends VolatileTwitBase
 		
 		foreach( $storage->getNewStatusList() as $status )
 		{
-			if( in_array($status->user->screen_name,$specials) || rand(0,100)<10 )
+			if( (in_array($status->user->screen_name,$specials)&&rand(0,100)<30)
+				|| rand(0,100)<10 )
 			{
 				$best = $generator->generate($status->text);
 				if( $best['to'] )

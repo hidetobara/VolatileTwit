@@ -56,19 +56,14 @@ abstract class VolatileTwitBase
 		$response = $this->twitterApi->post( self::URL_UPDATE_STATUS, $options );
 		var_dump(array($info,$response));
 	}
-	protected function getTimeline()
+	protected function getTimelineResponse()
 	{
 		$options = array( 'count' => self::GET_STATUS_LIMIT, 'include_rts' => false );
 		$response = $this->twitterApi->get( self::URL_GET_TIMELINE, $options );
-		
-		$object = $this->cache->get( $this->cacheKeyLastStatus() );
-		$storage = new TwitterStorage( $object );
-		$storage->retrieveStatusFromXml( $response );
-		$this->cache->set( $this->cacheKeyLastStatus(), array('last_id'=>$storage->lastId) );
-		return $storage;
+		return $response;
 	}
 	
-	private function cacheKeyLastStatus(){		return sprintf("%s_last_status",$this->name);		}
+	protected function cacheKeyLastStatus(){		return sprintf("%s_last_status",$this->name);		}
 		
 	protected function initLearn()
 	{

@@ -67,17 +67,31 @@ class TwitterStorage
 {
 	const NAME_USER_FILE = 'twitter_user.csv';
 
-	public $lastId;
+	public $lastId;//
 	
 	public $listStatus;
 	public $listUser;
 	
 	function __construct( $opt=null )
 	{
-		$this->lastId = $opt['last_id'] ? $opt['last_id'] : 0;
+		$this->lastId = 0;
 		
 		$this->listStatus = array();
 		$this->listUser = array();
+	}
+	
+	/**
+	 * 途中状態を保存・読み込みする
+	 */
+	function setState($object)
+	{
+		if( $object['last_id'] ) $this->lastId = $object['last_id'];
+	}
+	function getState()
+	{
+		$object = array();
+		$object['last_id'] = $this->lastId;
+		return $object;
 	}
 	
 	function retrieveStatusFromXml( $context )
@@ -92,7 +106,6 @@ class TwitterStorage
 		{
 			$s = new TwitterStatus( $element );
 			$this->listStatus[ $s->id ] = $s;
-			if( !$this->lastId || $this->lastId < $s->id ) $this->lastId = $s->id;
 		}
 		ksort( $this->listStatus );
 		
@@ -118,18 +131,20 @@ class TwitterStorage
 		$u = $this->listUser[ $s->user->id ];
 		if( $u ) $s->user = $u;
 		$this->listStatus[ $s->id ] = $s;
-		if( !$this->lastId || $this->lastId < $s->id ) $this->lastId = $s->id;
 		return $s;
 	}
 	
 	function getNewStatusList()
 	{
 		$list = array();
+		$lastId = $this->lastId;
 		foreach( $this->listStatus as $sid => $status )
 		{
 			if( $this->lastId && $this->lastId >= $sid ) continue;
 			$list[ $sid ] = $status;
+			$lastId = $sid;
 		}
+		$this->lastId = $lastId;
 		return $list;
 	}
 	

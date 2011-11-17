@@ -45,7 +45,11 @@ class VolatileTwitHajime extends VolatileTwitBase
 		$generator = new ReplyState($this->name);
 		$generator->load();
 		
-		$storage = $this->getTimeline();
+		$object = $this->cache->get( $this->cacheKeyLastStatus() );
+		$storage = new TwitterStorage();
+		$storage->setState( $object );
+		$storage->retrieveStatusFromXml( $this->getTimelineResponse() );
+		
 		foreach( $storage->getNewStatusList() as $status )
 		{
 			if( in_array($status->user->screen_name,$specials) || rand(0,100)<10 )
@@ -60,5 +64,6 @@ class VolatileTwitHajime extends VolatileTwitBase
 				}
 			}
 		}
+		$this->cache->set( $this->cacheKeyLastStatus(), $storage->getState() );
 	}
 }

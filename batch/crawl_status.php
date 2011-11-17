@@ -31,13 +31,14 @@ class BatchCrawlStatus
 		$response = $this->getRecentStatus();
 
 		$object = $this->cache->get( self::NAME_LAST_ID );
-		$storage = new TwitterStorage( $object );
+		$storage = new TwitterStorage();
+		$storage->setState( $object );
 		$storage->loadUserFromFile();
 		$storage->retrieveStatusFromXml( $response );
 		$storage->saveStatus();
 		$storage->saveUser();
 		
-		$this->cache->set( self::NAME_LAST_ID, array('last_id'=>$storage->lastId) );
+		$this->cache->set( self::NAME_LAST_ID, $storage->getState() );
 	}
 	
 	function getRecentStatus()

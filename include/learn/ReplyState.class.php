@@ -36,7 +36,7 @@ class ReplyState
 			'to' => $to,
 			'dimension' => $this->evaluateDimension($from) );
 	}
-	function generate( $from, $acceptable=0.00002 )
+	function generate( $from, $acceptable=0.00005 )
 	{
 		$best = array( 'to' => null, 'distance' => $acceptable );
 		$dimension = $this->evaluateDimension( $from );

@@ -85,7 +85,7 @@ abstract class VolatileTwitBase
 		$this->filter->load_1Line1Element( ConfPath::keywordsFilter(), 0, 1 );
 		
 		$this->ipca = Ipca::singleton();
-		$this->ipca->load( $this->target );
+		$this->ipca->load( 1 );
 		
 		$this->initialized = true;
 	}

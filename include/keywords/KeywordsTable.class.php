@@ -81,7 +81,6 @@ class KeywordsTable
 			$this->m_Table[ $word ] = $items;
 		}
 		fclose( $f );
-		if(ENV_TYPE != 'RELEASE') printf( "Keywords table(%s) loaded\n", $path );
 	}
 	
 	function addKeywordIntoMecabInfo( $mecab, $targets=null )

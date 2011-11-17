@@ -28,8 +28,8 @@ define( 'TMP_DIR', ROOT_DIR . 'tmp/' );
 define( 'SMARTY_WORK_DIR', ROOT_DIR . 'smarty_work/' );
 define( 'SMARTY_TEMPLATE_DIR', ROOT_DIR . 'smarty/' );
 
-
-mb_regex_encoding( "UTF-8" );
-
 require_once( CONF_DIR . 'secret.php' );
+
+mb_regex_encoding( 'UTF-8' );
+ini_set( 'memory_limit', '192M' );
 ?>

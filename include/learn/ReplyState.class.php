@@ -7,6 +7,7 @@ require_once( INCLUDE_DIR . 'learn/IpcaImage.class.php' );
 
 class ReplyState
 {
+	const DIMANSION_MAX = 17;
 	private $name;
 
 	private $filter;
@@ -25,7 +26,7 @@ class ReplyState
 		$this->keywords->loadTable( ConfPath::keywords() );
 		
 		$this->ipca = Ipca::singleton();
-		$this->ipca->load();
+		$this->ipca->load( self::DIMANSION_MAX );
 	}
 	
 	function learn( $from, $to )
@@ -65,7 +66,7 @@ class ReplyState
 	protected function dimensionDistance( $d1, $d2 )
 	{
 		$sum = 0.0;
-		for( $i=0; $i<count($d1); $i++ )
+		for( $i=0; $i<self::DIMANSION_MAX; $i++ )
 		{
 			$tmp = $d2[$i] - $d1[$i];
 			$sum += $tmp * $tmp;

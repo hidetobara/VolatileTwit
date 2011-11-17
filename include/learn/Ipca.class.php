@@ -23,6 +23,7 @@ class Ipca
 	{
 		if( !$max ) $max = self::MAIN_MAX;
 		if( count($this->mains) == $max ) return;
+		$this->mains = array();
 		
 		$path = ConfPath::ipcaBin();
 		if( !is_file($path) )
@@ -39,6 +40,7 @@ class Ipca
 			$this->mains[ $m ] = array_slice( $cells, 0 );
 		}
 		fclose($f);
+		printf( "\tIpca.load( {$max} ): %dkb\n", memory_get_peak_usage()/1000 );
 	}
 	
 	function project( &$img, &$vec )

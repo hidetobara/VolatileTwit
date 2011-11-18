@@ -28,6 +28,7 @@ abstract class VolatileTwitBase
 
 	protected $target;
 	protected $name;
+	protected $myName;
 	protected $defaultTalk;
 	
 	protected $initialized = false;

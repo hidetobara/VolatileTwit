@@ -8,6 +8,7 @@ class VolatileTwitShokos extends VolatileTwitBase
 	{
 		$this->defaultTalk = 'うるせー';
 		$this->name = 'shokos';
+		$this->myName = 'shok0s';
 		$this->target = 2;
 		
 		$this->userKey = SHOKOS_OAUTH_KEY;

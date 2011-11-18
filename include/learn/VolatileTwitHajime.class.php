@@ -8,6 +8,7 @@ class VolatileTwitHajime extends VolatileTwitBase
 	{
 		$this->defaultTalk = 'うんこ';
 		$this->name = 'hajimehoshi';
+		$this->myName = 'hajimeh0shi';
 		$this->target = 1;
 		
 		$this->userKey = HAJIME_OAUTH_KEY;
@@ -39,9 +40,7 @@ class VolatileTwitHajime extends VolatileTwitBase
 	}
 	
 	private function reply()
-	{
-		$specials = array('hajimehoshi','shokos','shok0s','hidetobara');
-		
+	{		
 		$generator = new ReplyState($this->name);
 		$generator->load();
 		
@@ -52,9 +51,13 @@ class VolatileTwitHajime extends VolatileTwitBase
 		
 		foreach( $storage->getNewStatusList() as $status )
 		{
-			if( (in_array($status->user->screen_name,$specials)&&rand(0,100)<30)
-				|| rand(0,100)<10 )
+			if( $this->isMyTweet($status) ) continue;
+			
+			if( ($this->isSpecialTweet($status) && $this->invoker(20))
+				|| $this->isReplyTweetForMe($status)
+				|| $this->invoker(3) )
 			{
+				var_dump($status);
 				$best = $generator->generate($status->text);
 				if( $best['to'] )
 				{
@@ -66,5 +69,22 @@ class VolatileTwitHajime extends VolatileTwitBase
 			}
 		}
 		$this->cache->set( $this->cacheKeyLastStatus(), $storage->getState() );
+	}
+	private function isMyTweet($status)
+	{
+		return $status->user->screen_name == $this->myName;
+	}
+	private function isSpecialTweet($status)
+	{
+		$specials = array('hajimehoshi','shokos','shok0s','hidetobara');
+		return in_array($status->user->screen_name,$specials);
+	}
+	private function isReplyTweetForMe($status)
+	{
+		return strpos($status->text, "@".$this->myName) !== false;
+	}
+	private function invoker($percent)
+	{
+		return rand(0,99) < $percent;
 	}
 }

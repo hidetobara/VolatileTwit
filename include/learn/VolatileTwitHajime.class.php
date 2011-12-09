@@ -55,7 +55,7 @@ class VolatileTwitHajime extends VolatileTwitBase
 			
 			if( ($this->isSpecialTweet($status) && $this->invoker(20))
 				|| $this->isReplyTweetForMe($status)
-				|| $this->invoker(0) )
+				|| $this->invoker(1) )
 			{
 				var_dump($status);
 				$best = $generator->generate($status->text);

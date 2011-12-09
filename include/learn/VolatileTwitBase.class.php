@@ -59,7 +59,7 @@ abstract class VolatileTwitBase
 	}
 	protected function getTimelineResponse()
 	{
-		$options = array( 'count' => self::GET_STATUS_LIMIT, 'include_rts' => false );
+		$options = array( 'count' => self::GET_STATUS_LIMIT, 'include_rts' => 0 );
 		$response = $this->twitterApi->get( self::URL_GET_TIMELINE, $options );
 		return $response;
 	}

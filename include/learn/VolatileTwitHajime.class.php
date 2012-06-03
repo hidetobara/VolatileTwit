@@ -53,9 +53,10 @@ class VolatileTwitHajime extends VolatileTwitBase
 		{
 			if( $this->isMyTweet($status) ) continue;
 			
-			if( ($this->isSpecialTweet($status) && $this->invoker(20))
+			if( ($this->isSpecialTweet($status) && $this->invoker(10))
 				|| $this->isReplyTweetForMe($status)
-				|| $this->invoker(1) )
+				//|| $this->invoker(1)
+				 )
 			{
 				var_dump($status);
 				$best = $generator->generate($status->text);
@@ -76,7 +77,8 @@ class VolatileTwitHajime extends VolatileTwitBase
 	}
 	private function isSpecialTweet($status)
 	{
-		$specials = array('hajimehoshi','shokos','shok0s','hidetobara');
+		$specials = array('hajimehoshi','shokos','shok0s','hidetobara','yoshiori','shimacpyon','kwappa',
+			'ugdark','takano32','tkzwtks','yamashiro','slightair','Omegamega','fat47');
 		return in_array($status->user->screen_name,$specials);
 	}
 	private function isReplyTweetForMe($status)

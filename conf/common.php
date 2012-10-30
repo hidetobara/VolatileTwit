@@ -1,13 +1,13 @@
 <?php
 if( ENV_TYPE == 'RELEASE' ){
 	define( 'HOME_URL', 'http://baraoto.sakura.ne.jp/VolatileTwit/' );
-	define( 'ROOT_DIR', '/home/baraoto/volatile-twit-trunk/' );
+	define( 'ROOT_DIR', '/home/baraoto/VolatileTwit/' );
 
 	define( 'IPCA_MAIN_BIN', ROOT_DIR . 'data/ipcaMain.bin' );
 //	define( 'IPCA_REFLECT', ROOT_DIR . 'data/reflect_%02d.csv' );
 //	define( 'KEYWORD_LIST', ROOT_DIR . 'data/keywords.gamma.csv' );
 //	define( 'FILTER_LIST', ROOT_DIR . 'data/filter.inverse.gamma.csv' );
-	define( 'MECAB_EXE', '/home/baraoto/local/mecab/bin/mecab' );
+	define( 'MECAB_EXE', '/usr/local/bin/mecab' );
 	
 }else{
 	define( 'HOME_URL', 'http://127.0.0.1/VolatileTwit/public_html/' );

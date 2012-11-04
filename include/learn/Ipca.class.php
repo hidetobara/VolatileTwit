@@ -6,32 +6,32 @@ require_once( CONF_DIR . 'path.php' );
  */
 class Ipca
 {
-	const MAIN_MAX = 32;
+	const MAIN_MAX = 16;	//default:32
 	const ITEM_LENGTH = 76800;
 	protected $mains = array();
 	protected $reflect = array();
 	protected $reflectNormal;
-	
+
 	protected static $Instance = null;
 	static function singleton()
 	{
 		if( !self::$Instance ) self::$Instance = new self();
 		return self::$Instance;
 	}
-	
+
 	function load( $max=0 )
 	{
 		if( !$max ) $max = self::MAIN_MAX;
 		if( count($this->mains) == $max ) return;
 		$this->mains = array();
-		
+
 		$path = ConfPath::ipcaBin();
 		if( !is_file($path) )
 		{
 			print "Warn ! The file is not found: {$path}\n";
 			return;
 		}
-		
+
 		$f = fopen( $path, "rb" );
 		for( $m = 0; $m < $max; $m++ )
 		{
@@ -42,14 +42,14 @@ class Ipca
 		fclose($f);
 		printf( "\tIpca.load( {$max} ): %dkb\n", memory_get_peak_usage()/1000 );
 	}
-	
+
 	function project( &$img, &$vec )
 	{
 		for( $i = 0; $i < self::ITEM_LENGTH; $i++ )
 		{
 			$img[ $i ] -= $this->mains[ 0 ][ $i ];
 		}
-		
+
 		$vec = array(1.0);
 		for( $m = 1; $m < self::MAIN_MAX; $m++ )
 		{
@@ -63,7 +63,7 @@ class Ipca
 			$vec[ $m ] = $amt;
 		}
 	}
-	
+
 	function backProject( &$vec, &$img, $targets=null )
 	{
 		$nrm = array(1.0);
@@ -78,11 +78,11 @@ class Ipca
 			if( $amt > 0.0 ) $nrm[ $m ] = $vec[ $m ] / $amt;
 			else $nrm[ $m ] = 0.0;
 		}
-		
+
 		for( $i = 0; $i < self::ITEM_LENGTH; $i++ )
 		{
-			if( is_array($targets) && !in_array($i,$targets) ) continue; 
-			
+			if( is_array($targets) && !in_array($i,$targets) ) continue;
+
 			$amt = 0.0;
 			for( $m = 0; $m < self::MAIN_MAX; $m++ )
 			{
@@ -91,9 +91,9 @@ class Ipca
 			$img[ $i ] = $amt;
 		}
 	}
-	
+
 	function reflectProject( &$img, &$res, $t )
-	{	
+	{
 		$line = $this->loadReflect( $t );
 		if( !is_array($line) )
 		{
@@ -109,7 +109,7 @@ class Ipca
 		}
 		$res[ $t ] = $amt;
 	}
-		
+
 	function setupReflectNormal()
 	{
 		if( $this->reflectNormal ) return;
@@ -126,9 +126,9 @@ class Ipca
 
 			if( $amt > 0.0 ) $this->reflectNormal[ $m ] = 1.0 / $amt;
 			else $this->reflectNormal[ $m ] = 0.0;
-		}	
+		}
 	}
-	
+
 	function makeReflectLine( $target )
 	{
 		$line = array();
@@ -143,7 +143,7 @@ class Ipca
 		}
 		return $line;
 	}
-	
+
 	function saveReflect( Array $line, $target )
 	{
 		$path = ConfPath::reflectUser( $target );
@@ -155,13 +155,13 @@ class Ipca
 		}
 		fclose( $fout );
 	}
-	
+
 	function loadReflect( $target )
 	{
 		$path = ConfPath::reflectUser( $target );
 		if( !is_file($path) ) return null;
-		
-		$fin = fopen( $path, "r" );		
+
+		$fin = fopen( $path, "r" );
 		$reflect = array();
 		while( $line = fgets($fin) )
 		{

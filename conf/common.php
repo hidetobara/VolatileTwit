@@ -8,17 +8,17 @@ if( ENV_TYPE == 'RELEASE' ){
 //	define( 'KEYWORD_LIST', ROOT_DIR . 'data/keywords.gamma.csv' );
 //	define( 'FILTER_LIST', ROOT_DIR . 'data/filter.inverse.gamma.csv' );
 	define( 'MECAB_EXE', '/usr/local/bin/mecab' );
-	
+
 }else{
 	define( 'HOME_URL', 'http://127.0.0.1/VolatileTwit/public_html/' );
 	define( 'ROOT_DIR', 'C:/Develop/xampp/htdocs/VolatileTwit/' );
-	
+
 	define( 'IPCA_MAIN_BIN', ROOT_DIR . 'data/ipcaMain.bin' );
 //	define( 'IPCA_REFLECT', ROOT_DIR . 'data/reflect_%02d.csv' );
 //	define( 'KEYWORD_LIST', ROOT_DIR . 'data/keywords.gamma.csv' );
 //	define( 'FILTER_LIST', ROOT_DIR . 'data/filter.inverse.gamma.csv' );
 	define( 'MECAB_EXE', 'C:/Develop/MeCab/bin/mecab.exe' );
-	
+
 }
 define( 'CONF_DIR', ROOT_DIR . 'conf/' );
 define( 'INCLUDE_DIR', ROOT_DIR . 'include/' );
@@ -31,5 +31,5 @@ define( 'SMARTY_TEMPLATE_DIR', ROOT_DIR . 'smarty/' );
 require_once( CONF_DIR . 'secret.php' );
 
 mb_regex_encoding( 'UTF-8' );
-ini_set( 'memory_limit', '192M' );
+ini_set( 'memory_limit', '256M' );
 ?>

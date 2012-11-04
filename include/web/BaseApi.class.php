@@ -1,5 +1,5 @@
 <?php
-require_once( 'Log.php' );
+require_once( INCLUDE_DIR . 'Log.php' );
 
 
 /*
@@ -10,18 +10,18 @@ class BaseApi
 	protected $class = 'base';
 	protected $array;
 	protected $format;
-	
+
 	function __construct( $opt=null )
 	{
 		$this->array = array( 'status' => 'undefined' );
 		$this->format = "xml";
 	}
-	
+
 	function assign( $name, $value )
 	{
 		$this->array[ $name ] = $value;
 	}
-	
+
 	function run()
 	{
 		try
@@ -48,41 +48,41 @@ class BaseApi
 		$validFormats = array( 'xml', 'json', 'txt' );
 		if( in_array( $_REQUEST['format'], $validFormats ) ) $this->format = $_REQUEST['format'];
 	}
-	
+
 	protected function initialize()
 	{
 	}
-	
+
 	protected function handle()
 	{
 	}
-	
+
 	protected function display()
 	{
 		switch($this->format)
 		{
 			case 'xml':
-				$context = $this->toXml( $this->array, 'root' );				
+				$context = $this->toXml( $this->array, 'root' );
 				header( "Content-type: text/xml" );
 				//header( "Content-Length: " . count($context) );
 				print $context;
 				break;
-				
+
 			case 'json':
 				$context = json_encode( $this->array );
 				header( "Content-type: application/json" );
 				//header( "Content-Length: " . count($context) );
 				print $context;
-				
+
 			case 'txt':
 				var_dump( $this->array );
 		}
 	}
-	
+
 	protected function finalize()
 	{
 	}
-	
+
 	/**
 	 * The main function for converting to an XML document.
 	 * Pass in a multi dimensional array and this recrusively loops through and builds up an XML document.
@@ -94,7 +94,7 @@ class BaseApi
 	protected function toXml( $data, $rootNodeName = 'data', $xml=null )
 	{
 		if ($xml == null) $xml = simplexml_load_string("<?xml version='1.0' encoding='utf-8'?><$rootNodeName />");
- 
+
 		// loop through the data passed in.
 		foreach($data as $key => $value)
 		{
@@ -107,7 +107,7 @@ class BaseApi
 
 			// replace anything not alpha numeric
 			$key = preg_replace('/[^a-z_]/i', '', $key);
-			 
+
 			// if there is another array found recrusively call this function
 			if (is_array($value))
 			{
@@ -115,12 +115,12 @@ class BaseApi
 				// recrusive call.
 				$this->toXml($value, $rootNodeName, $node);
 			}
-			else 
+			else
 			{
 				// add single node.
 				$value = htmlspecialchars($value);
 				$xml->addChild($key,$value);
-			} 
+			}
 		}
 		// pass back as string. or simple xml object if you want!
 		return $xml->asXML();

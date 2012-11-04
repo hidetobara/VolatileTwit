@@ -31,5 +31,5 @@ define( 'SMARTY_TEMPLATE_DIR', ROOT_DIR . 'smarty/' );
 require_once( CONF_DIR . 'secret.php' );
 
 mb_regex_encoding( 'UTF-8' );
-ini_set( 'memory_limit', '256M' );
+ini_set( 'memory_limit', '512M' );
 ?>

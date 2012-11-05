@@ -1,4 +1,4 @@
 #!/bin/sh
-cd /home/baraoto/volatile-twit-trunk/batch/
+cd /home/baraoto/VolatileTwit/batch/
 ./gzip_status.sh
 

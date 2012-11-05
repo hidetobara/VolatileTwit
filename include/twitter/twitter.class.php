@@ -9,7 +9,7 @@ class TwitterLog
 	private $file;
 	private $line;
 	public $count = 0;
-	
+
 	public function open($path)
 	{
 		if( !is_file($path) ) return false;
@@ -31,7 +31,7 @@ class TwitterLog
 		if( !$this->line ) return null;
 		$line = rtrim( $this->line );
 		if( preg_match('/^\s*#/', $line) ) return array();
-		
+
 		$cells = mb_split( ",", $line );
 		$array = array();
 		foreach( $cells as $cell )
@@ -68,18 +68,18 @@ class TwitterStorage
 	const NAME_USER_FILE = 'twitter_user.csv';
 
 	public $lastId;//
-	
+
 	public $listStatus;
 	public $listUser;
-	
+
 	function __construct( $opt=null )
 	{
 		$this->lastId = 0;
-		
+
 		$this->listStatus = array();
 		$this->listUser = array();
 	}
-	
+
 	/**
 	 * 途中状態を保存・読み込みする
 	 */
@@ -93,22 +93,22 @@ class TwitterStorage
 		$object['last_id'] = $this->lastId;
 		return $object;
 	}
-	
+
 	function retrieveStatusFromXml( $context )
 	{
 		$xml = simplexml_load_string( $context );
 		if( $xml->hash->error )
 		{
-			throw new Exeption( $xml->hash->error );
+			throw new Exception( $xml->hash->error );
 		}
-		
+
 		foreach( $xml->status as $element )
 		{
 			$s = new TwitterStatus( $element );
 			$this->listStatus[ $s->id ] = $s;
 		}
 		ksort( $this->listStatus );
-		
+
 		foreach( $this->listStatus as $status )
 		{
 			$this->listUser[ $status->user->id ] = $status->user;
@@ -125,15 +125,15 @@ class TwitterStorage
 			$kv = mb_split( "=", $cell );
 			if( count($kv)==2 ) $list[ $kv[0] ] = $kv[1];
 		}
-		
+
 		$s = new TwitterStatus( $list );
-		
+
 		$u = $this->listUser[ $s->user->id ];
 		if( $u ) $s->user = $u;
 		$this->listStatus[ $s->id ] = $s;
 		return $s;
 	}
-	
+
 	function getNewStatusList()
 	{
 		$list = array();
@@ -147,7 +147,7 @@ class TwitterStorage
 		$this->lastId = $lastId;
 		return $list;
 	}
-	
+
 	function saveStatus()
 	{
 		foreach( $this->getNewStatusList() as $sid => $status )
@@ -157,16 +157,16 @@ class TwitterStorage
 			if( !is_dir($dir) ) mkdir( $dir, 0777, true );
 			$line = sprintf( "%s,%s\n", $sid, $status->toCsv() );
 			file_put_contents( $path, $line, FILE_APPEND );
-			
+
 			$this->lastId = $sid;
 		}
 	}
-	
+
 	function loadUserFromFile( $path=null )
 	{
 		if( !$path ) $path = LOG_DIR . self::NAME_USER_FILE;
 		if( !is_file($path) ) return;
-	
+
 		$fp = fopen( $path, "r" );
 		while( $line = fgets($fp) )
 		{
@@ -180,11 +180,11 @@ class TwitterStorage
 			}
 			$u = new TwitterUser( $list );
 			if( !$u->id || !$u->screen_name ) continue;
-			
+
 			$this->listUser[ $u->id ] = $u;
 		}
 	}
-	
+
 	function saveUser( $path=null )
 	{
 		if( !$path ) $path = LOG_DIR . self::NAME_USER_FILE;
@@ -193,10 +193,10 @@ class TwitterStorage
 		if( !is_dir($dir) ) mkdir( $dir, 0777, true );
 
 		ksort( $this->listUser );
-		
+
 		$fp = fopen( $path, "w" );
 		if( !$fp ) return;
-		
+
 		foreach( $this->listUser as $uid => $user )
 		{
 			fprintf( $fp, "%s,%s\n", $uid, $user->toCsv() );
@@ -211,9 +211,9 @@ class TwitterStatus
 	public $created_at;
 	public $text;
 	public $reply_to;
-	
+
 	public $user;// class instance
-	
+
 	function __construct( $a )
 	{
 		if(is_a($a,"SimpleXMLElement")) $this->copyElement( $a );
@@ -227,7 +227,7 @@ class TwitterStatus
 		$this->text = (string)$element->text;
 		$this->text = mb_ereg_replace("[,\r\n]+", " ", $this->text);
 		$this->reply_to = $element->in_reply_to_status_id ? (string)$element->in_reply_to_status_id : null;
-		
+
 		$user = new TwitterUser( $element->user );
 		$this->user = $user;
 	}
@@ -238,10 +238,10 @@ class TwitterStatus
 		if( is_string($a['created_at']) ) $this->created_at = strtotime( $a['created_at'] );
 		if( is_string($a['text']) ) $this->text = $a['text'];
 		if( $a['reply_to'] ) $this->reply_to = $a['reply_to'];
-		
+
 		$this->user = new TwitterUser( $a );
 	}
-	
+
 	function toCsv()
 	{
 		$created = date("Y-m-d H:i:s", $this->created_at);
@@ -260,7 +260,7 @@ class TwitterUser
 	public $name;
 	public $screen_name;
 	public $profile_image_url;
-	
+
 	function __construct( $a )
 	{
 		if(is_a($a,"SimpleXMLElement")) $this->copyElement( $a );
@@ -281,7 +281,7 @@ class TwitterUser
 		if( $a['user_screen_name'] ) $this->screen_name = $a['user_screen_name'];
 		if( $a['user_image_url'] ) $this->profile_image_url = $a['user_image_url'];
 	}
-	
+
 	function toCsv()
 	{
 		return "user_id={$this->id},"

@@ -8,10 +8,10 @@ require_once( INCLUDE_DIR . "data/FileCache.class.php" );
  */
 class BatchCrawlStatus
 {
-	const URL_GET_TIMELINE = 'http://twitter.com/statuses/friends_timeline.xml';
+	const URL_GET_TIMELINE = 'http://api.twitter.com/1/statuses/friends_timeline.xml';
 	const NAME_LAST_ID = 'crawl_status_last_id';
 	const GET_STATUS_MAX = 200;
-	
+
 	protected $cache;
 	protected $oauth;
 
@@ -23,7 +23,7 @@ class BatchCrawlStatus
 			CONSUMER_SECRET,
 			HIDETOBARA_OAUTH_KEY,
 			HIDETOBARA_OAUTH_SECRET
-			);			
+			);
 	}
 
 	function run()
@@ -37,10 +37,10 @@ class BatchCrawlStatus
 		$storage->retrieveStatusFromXml( $response );
 		$storage->saveStatus();
 		$storage->saveUser();
-		
+
 		$this->cache->set( self::NAME_LAST_ID, $storage->getState() );
 	}
-	
+
 	function getRecentStatus()
 	{
 		$options = array( 'count' => self::GET_STATUS_MAX );

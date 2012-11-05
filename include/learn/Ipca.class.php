@@ -6,7 +6,7 @@ require_once( CONF_DIR . 'path.php' );
  */
 class Ipca
 {
-	const MAIN_MAX = 8;	//default:32
+	const MAIN_MAX = 16;	//default:32
 	const ITEM_LENGTH = 76800;
 	protected $mains = array();
 	protected $reflect = array();

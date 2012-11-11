@@ -1,11 +1,11 @@
 <?php
 class ConfPath
 {
-	const VERSION = 'delta';
+	const VERSION = 'zeta';
 
 	static function rawStatusList()
 	{
-		return sprintf("%sstatus/2011*.log.gz", LOG_DIR);
+		return sprintf("%sstatus/201*.log.gz", LOG_DIR);
 	}
 	static function keywords()
 	{
@@ -31,7 +31,7 @@ class ConfPath
 	{
 		return sprintf("%sscore.%02d.%s.csv", DATA_DIR, $id, self::VERSION);
 	}
-	
+
 	static function stateMatrix( $name )
 	{
 		return sprintf("%sstate_matrix.%s.csv", DATA_DIR, $name);
@@ -40,15 +40,15 @@ class ConfPath
 	{
 		return sprintf("%sstate_texts.%s.csv", DATA_DIR, $name);
 	}
-	
+
 	static function replyList( $name )
 	{
 		return sprintf("%sreply_score.%s.csv", DATA_DIR, $name);
 	}
-	
+
 	static function ipcaBin()
 	{
-		return ROOT_DIR . 'data/ipcaMain.bin';
+		return sprintf("%s%s/ipcaMain.bin", DATA_DIR, self::VERSION);
 	}
 }
 ?>

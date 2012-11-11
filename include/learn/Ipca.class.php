@@ -31,7 +31,6 @@ class Ipca
 			print "Warn ! The file is not found: {$path}\n";
 			return;
 		}
-
 		$f = fopen( $path, "rb" );
 		for( $m = 0; $m < $max; $m++ )
 		{
@@ -170,6 +169,11 @@ class Ipca
 			$reflect[ (int)$cells[0] ] = (float)$cells[1];
 		}
 		fclose( $fin );
+		if( count($reflect) < self::ITEM_LENGTH / 2 )
+		{
+			print "WARNING! reflect file.\n";
+			return null;
+		}
 		return $reflect;
 	}
 }

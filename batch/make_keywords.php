@@ -16,7 +16,6 @@ foreach( glob( ConfPath::rawStatusList() ) as $path )
 		$table->addRecordByMecab($info['mecab']);
 	}
 	$loader->close();
-	break;
 }
 $table->saveTable( ConfPath::keywords() );
 ?>

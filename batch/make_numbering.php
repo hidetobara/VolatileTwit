@@ -1,5 +1,6 @@
 <?php
 require_once( '../configure.php' );
+require_once( CONF_DIR . 'path.php' );
 require_once( INCLUDE_DIR . 'keywords/KeywordsTable.class.php' );
 require_once( INCLUDE_DIR . 'twitter/twitter.class.php' );
 

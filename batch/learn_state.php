@@ -16,7 +16,7 @@ class LearnState
 		$this->name = $name;
 		$this->state = new BlockState();
 	}
-	
+
 	function run( $paths )
 	{
 		foreach( $paths as $path )
@@ -29,10 +29,10 @@ class LearnState
 			}
 			$store->close();
 		}
-		
+
 		$this->save();
 	}
-	
+
 	function save()
 	{
 		$this->state->saveMatrix(ConfPath::stateMatrix($this->name));
@@ -43,21 +43,22 @@ class LearnState
 		$this->state->loadMatrix(ConfPath::stateMatrix($this->name));
 		$this->state->loadText2id(ConfPath::stateTexts($this->name));
 	}
-	
+
 	private function readInfo($info)
 	{
 		if( $info['score'] < self::SCORE_LIMIT ) return false;
-		
+
 		$context = $info['text'];
 		$context = mb_ereg_replace( "[\@\#][A-Za-z0-9_]+", "", $context );
-		$context = mb_ereg_replace( "[「」『』【】\]\[\"\']", "", $context );
+		$context = mb_ereg_replace( "[「」『』【】\]\[\"\'\(\);]", " ", $context );
 		$context = mb_ereg_replace( "(http:|https:)", "", $context );
 		$context = mb_ereg_replace( "//[/A-Za-z0-9\.\-\_]+", "", $context );
+		$context = mb_ereg_replace( "(&gt|&lt)", "", $context );
 
 		$this->state->learn( $context );
 		return true;
 	}
-	
+
 	function test()
 	{
 		print mb_convert_encoding( $this->state->getnerate(), "SJIS" );

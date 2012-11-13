@@ -15,6 +15,6 @@ $shokos->run();
 unset($shokos);
 
 $qb = new VolatileTwitQb();
-$qb-run();
+$qb->run();
 unset($qb);
 ?>

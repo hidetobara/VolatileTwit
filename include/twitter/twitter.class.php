@@ -16,7 +16,7 @@ class TwitterLog
 		$this->file = gzopen( $path, "rb" );
 		$this->line = null;
 		if( !$this->file ) return false;
-		print "\topend {$path}\n";
+		print "\topened {$path}\n";
 		return true;
 	}
 	public function read1Line()

@@ -10,21 +10,21 @@ class ScanReply
 	private $name;
 	private $threads;
 	private $replyState;
-	
+
 	function __construct($name)
 	{
 		$this->name = $name;
 		$this->threads = array();
 		$this->replyState = new ReplyState($this->name);
 	}
-	
+
 	public function run()
 	{
 		$this->buildReplies();
 		$this->scanReplies();
 		$this->writeReplies();
 	}
-		
+
 	private function buildReplies()
 	{
 		$loader = new TwitterLog();
@@ -41,11 +41,11 @@ class ScanReply
 		}
 		printf( "\treply count = %d\n", count($this->threads) );
 	}
-	
+
 	private function scanReplies()
 	{
 		$keys = array_keys( $this->threads );
-		
+
 		$loader = new TwitterLog();
 		foreach( glob( ConfPath::rawStatusList() ) as $path )
 		{
@@ -64,26 +64,27 @@ class ScanReply
 			$loader->close();
 		}
 	}
-		
+
 	private function writeReplies()
 	{
 		$this->replyState->save();
 	}
-	
+
 	private function pickupText($text)
 	{
 		$text = mb_ereg_replace( "[\@\#][A-Za-z0-9_]+", "", $text );
 		$text = mb_ereg_replace( "(http|https)://[/A-Za-z0-9\.\-\_\?\=]+", "", $text );
+		$text = mb_ereg_replace( "(&gt;|&lt;|&nbsp;)", "", $text );
 		$text = mb_ereg_replace( "[ ]+", "", $text );
 		return $text;
 	}
 }
 
-if(true){
+if(false){
 	$instance = new ScanReply('hajimehoshi');
 	$instance->run();
 }
-if(false){
+if(true){
 	$state = new ReplyState('hajimehoshi');
 	$state->load();
 	$best = $state->generate('寝ます');

@@ -50,7 +50,7 @@ class LearnState
 
 		$context = $info['text'];
 		$context = mb_ereg_replace( "[\@\#][A-Za-z0-9_]+", "", $context );
-		$context = mb_ereg_replace( "[「」『』【】\]\[\"\'\(\);]", " ", $context );
+		$context = mb_ereg_replace( "[「」『』【】（）\]\[\"\'\(\);]", " ", $context );
 		$context = mb_ereg_replace( "(http:|https:)", "", $context );
 		$context = mb_ereg_replace( "//[/A-Za-z0-9\.\-\_]+", "", $context );
 		$context = mb_ereg_replace( "(&gt|&lt)", "", $context );
@@ -65,21 +65,26 @@ class LearnState
 	}
 }
 
-if(false)
+if(true)
 {
 	$learn = new LearnState('hajimehoshi');
 	$paths = array(
-		DATA_DIR.'score.hajimehoshi.delta.csv',
-		DATA_DIR.'score.hajimeh0shi.delta.csv');
+		DATA_DIR.'score.hajimehoshi.zeta.csv', );
 }
-if(true)
+if(false)
 {
 	$learn = new LearnState('shokos');
 	$paths = array(
-		DATA_DIR.'score.shokos.delta.csv', );
+		DATA_DIR.'score.shokos.zeta.csv', );
+}
+if(false)
+{
+	$learn = new LearnState('qb');
+	$paths = array(
+			DATA_DIR.'score.qb.zeta.csv', );
 }
 
-if(false)
+if(true)
 {
 	$learn->run($paths);
 	$learn->test();

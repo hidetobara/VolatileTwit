@@ -4,6 +4,7 @@ require_once( '../configure.php' );
 require_once( CONF_DIR . 'common.php' );
 require_once( INCLUDE_DIR . "learn/VolatileTwitHajime.class.php" );
 require_once( INCLUDE_DIR . "learn/VolatileTwitShokos.class.php" );
+require_once( INCLUDE_DIR . "learn/VolatileTwitQb.class.php" );
 
 $hajime = new VolatileTwitHajime();
 $hajime->run();
@@ -12,4 +13,8 @@ unset($hajime);
 $shokos = new VolatileTwitShokos();
 $shokos->run();
 unset($shokos);
+
+$qb = new VolatileTwitQb();
+$qb-run();
+unset($qb);
 ?>

@@ -4,9 +4,6 @@ if( ENV_TYPE == 'RELEASE' ){
 	define( 'ROOT_DIR', '/home/baraoto/VolatileTwit/' );
 
 	define( 'IPCA_MAIN_BIN', ROOT_DIR . 'data/ipcaMain.bin' );
-//	define( 'IPCA_REFLECT', ROOT_DIR . 'data/reflect_%02d.csv' );
-//	define( 'KEYWORD_LIST', ROOT_DIR . 'data/keywords.gamma.csv' );
-//	define( 'FILTER_LIST', ROOT_DIR . 'data/filter.inverse.gamma.csv' );
 	define( 'MECAB_EXE', '/usr/local/bin/mecab' );
 
 }else{
@@ -14,9 +11,6 @@ if( ENV_TYPE == 'RELEASE' ){
 	define( 'ROOT_DIR', 'C:/Develop/xampp/htdocs/VolatileTwit/' );
 
 	define( 'IPCA_MAIN_BIN', ROOT_DIR . 'data/ipcaMain.bin' );
-//	define( 'IPCA_REFLECT', ROOT_DIR . 'data/reflect_%02d.csv' );
-//	define( 'KEYWORD_LIST', ROOT_DIR . 'data/keywords.gamma.csv' );
-//	define( 'FILTER_LIST', ROOT_DIR . 'data/filter.inverse.gamma.csv' );
 	define( 'MECAB_EXE', 'C:/Develop/MeCab/bin/mecab.exe' );
 
 }

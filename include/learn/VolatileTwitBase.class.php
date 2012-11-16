@@ -82,7 +82,7 @@ abstract class VolatileTwitBase
 		$this->filter->load_1Line1Element( ConfPath::keywordsFilter(), 0, 1 );
 
 		$this->ipca = Ipca::singleton();
-		$this->ipca->load( 1 );
+		$this->ipca->load( 3 );
 
 		$this->initialized = true;
 	}
@@ -98,7 +98,7 @@ abstract class VolatileTwitBase
 		return $text;
 	}
 
-	protected function evaluateLikelihood( $text )
+	public function evaluateLikelihood( $text )
 	{
 		$mecab = mecab( $text );
 		$mecab = $this->keywords->addKeywordIntoMecabInfo( $mecab, array('動詞','名詞','形容詞','形容動詞') );
@@ -115,7 +115,7 @@ abstract class VolatileTwitBase
 	/*
 	 * generate best talk.
 	 */
-	protected function bestTalkInfo()
+	public function bestTalkInfo()
 	{
 		$best = array( 'text' => $this->defaultTalk, 'rate' => -0.01 );
 		for( $c = 0; $c < $this->talkRetryLimit; $c++ )

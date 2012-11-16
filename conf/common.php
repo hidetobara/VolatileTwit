@@ -26,4 +26,26 @@ require_once( CONF_DIR . 'secret.php' );
 
 mb_regex_encoding( 'UTF-8' );
 ini_set( 'memory_limit', '512M' );
+
+
+/*
+ * コンソールにテキストを出力する
+ */
+class Console
+{
+	static $needInfo = true;
+
+	//info
+	static function p( $s )
+	{
+		if(!self::$needInfo) return;
+		print( $s );
+	}
+
+	//error
+	static function e( $s )
+	{
+		print( $s );
+	}
+}
 ?>

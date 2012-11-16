@@ -39,7 +39,8 @@ class Ipca
 			$this->mains[ $m ] = array_slice( $cells, 0 );
 		}
 		fclose($f);
-		printf( "\tIpca.load( {$max} ): %dkb\n", memory_get_peak_usage()/1000 );
+
+		Console::p( sprintf( "\tIpca.load( {$max} ): %dkb\n", memory_get_peak_usage()/1000 ) );
 	}
 
 	function project( &$img, &$vec )

@@ -20,11 +20,11 @@ class VolatileTwitQb extends VolatileTwitBase
 
 	function isTrigered()
 	{
-		$hoursHit = array(4);
+		$hoursHit = array(4,15);
 
 		$hour = date("G");
 		$minute = date("i");
-		if( in_array($hour,$hoursHit) && floor($minute/10)==0 ) return true;
+		if( in_array($hour,$hoursHit) && floor($minute/10)==1 ) return true;
 		return false;
 	}
 

@@ -3,6 +3,6 @@
 base=`pwd`
 datestr=`date -d '1 days ago' +%Y%m%d`
 dir=/home/baraoto/VolatileTwit/log/status/
-cd $dir 
-/usr/bin/gzip ${datestr}.log
+cd $dir
+/usr/bin/gzip ${datestr}.json
 cd $base

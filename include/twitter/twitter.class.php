@@ -1,73 +1,51 @@
 <?php
 require_once( INCLUDE_DIR . "twitter/twitteroauth.php" );
 
+
 /*
- * ステータスログを読み取る
+ * API アクセス
  */
-class TwitterLog
+class TwitterApi
 {
-	private $file;
-	private $line;
-	public $count = 0;
+	const GET_STATUS_MAX = 200;
+	const URL_HOME_TIMELINE = 'https://api.twitter.com/1.1/statuses/home_timeline.json';
+	const URL_UPDATE_STATUS = 'https://api.twitter.com/1.1/statuses/update.json';
 
-	public function open($path)
-	{
-		if( !is_file($path) ) return false;
-		$this->file = gzopen( $path, "rb" );
-		$this->line = null;
-		if( !$this->file ) return false;
-		print "\topened {$path}\n";
-		return true;
-	}
-	public function read1Line()
-	{
-		$this->line = gzgets($this->file);
-		if( !$this->line ) return null;
-		$this->count++;
-		return $this;
-	}
-	public function getArray()
-	{
-		if( !$this->line ) return null;
-		$line = rtrim( $this->line );
-		if( preg_match('/^\s*#/', $line) ) return array();
+	protected $oauth;
 
-		$cells = mb_split( ",", $line );
-		$array = array();
-		foreach( $cells as $cell )
-		{
-			$kv = mb_split( "=", $cell, 2 );
-			if(count($kv)>=2) $array[$kv[0]] = $kv[1];
-		}
-		return $array;
-	}
-	public function getArrayPassedMecab()
+	function __construct( $key, $secret )
 	{
-		$array = $this->getArray();
-		if($array['text']) $array['mecab'] = mecab($array['text']);
-		return $array;
+		$this->oauth = new TwitterOAuth(
+				CONSUMER_KEY,
+				CONSUMER_SECRET,
+				$key,
+				$secret
+		);
 	}
-	public function getStatusObject()
+
+	function getHomeTimeline( $sinceId=null )
 	{
-		$array = $this->getArray();
-		return new TwitterStatus($array);
+		$o = array( 'count' => self::GET_STATUS_MAX );
+		if( $sinceId ) $o['since_id'] = $sinceId;
+		$r = $this->oauth->get( self::URL_HOME_TIMELINE, $o );
+		return json_decode($r, true);
 	}
-	public function close()
+
+	function updateStatus( $text )
 	{
-		gzclose($this->file);
-		$this->file = null;
-		$this->line = null;
+		$o = array( 'status'=>$text );
+		$r = $this->oauth->post( self::URL_UPDATE_STATUS, $o );
+		return json_decode($r, true);
 	}
 }
 
+
 /*
- * ステータスの格納
+ * ステータスの格納、保存、読み込み
  */
 class TwitterStorage
 {
-	const NAME_USER_FILE = 'twitter_user.csv';
-
-	public $lastId;//
+	public $lastId;
 
 	public $listStatus;
 	public $listUser;
@@ -80,214 +58,172 @@ class TwitterStorage
 		$this->listUser = array();
 	}
 
-	/**
-	 * 途中状態を保存・読み込みする
-	 */
-	function setState($object)
+	function loadStatus( $path )
 	{
-		if( $object['last_id'] ) $this->lastId = $object['last_id'];
-	}
-	function getState()
-	{
-		$object = array();
-		$object['last_id'] = $this->lastId;
-		return $object;
-	}
-
-	function retrieveStatusFromXml( $context )
-	{
-		$xml = simplexml_load_string( $context );
-		if( $xml->hash->error )
+		$gz = gzopen($path, "rb");
+		while( $line = gzgets($gz) )
 		{
-			throw new Exception( $xml->hash->error );
-		}
+			$a = json_decode($line, true);
+			$s = new TwitterStatus($a);
+			$this->listStatus[] = $s;
+			if($s->user) $this->listUser[$s->user->screen_name] = $s->user;
 
-		foreach( $xml->status as $element )
-		{
-			$s = new TwitterStatus( $element );
-			$this->listStatus[ $s->id ] = $s;
-		}
-		ksort( $this->listStatus );
-
-		foreach( $this->listStatus as $status )
-		{
-			$this->listUser[ $status->user->id ] = $status->user;
-		}
-	}
-
-	function retrieveStatusFromLine( $line )
-	{
-		$line = rtrim( $line );
-		$cells = mb_split( ",", $line );
-		$list = array();
-		foreach( $cells as $cell )
-		{
-			$kv = mb_split( "=", $cell );
-			if( count($kv)==2 ) $list[ $kv[0] ] = $kv[1];
-		}
-
-		$s = new TwitterStatus( $list );
-
-		$u = $this->listUser[ $s->user->id ];
-		if( $u ) $s->user = $u;
-		$this->listStatus[ $s->id ] = $s;
-		return $s;
-	}
-
-	function getNewStatusList()
-	{
-		$list = array();
-		$lastId = $this->lastId;
-		foreach( $this->listStatus as $sid => $status )
-		{
-			if( $this->lastId && $this->lastId >= $sid ) continue;
-			$list[ $sid ] = $status;
-			$lastId = $sid;
-		}
-		$this->lastId = $lastId;
-		return $list;
-	}
-
-	function saveStatus()
-	{
-		foreach( $this->getNewStatusList() as $sid => $status )
-		{
-			$path = LOG_DIR . "status/" . date("Ymd", $status->created_at) . ".log";
-			$dir = dirname( $path );
-			if( !is_dir($dir) ) mkdir( $dir, 0777, true );
-			$line = sprintf( "%s,%s\n", $sid, $status->toCsv() );
-			file_put_contents( $path, $line, FILE_APPEND );
-
-			$this->lastId = $sid;
-		}
-	}
-
-	function loadUserFromFile( $path=null )
-	{
-		if( !$path ) $path = LOG_DIR . self::NAME_USER_FILE;
-		if( !is_file($path) ) return;
-
-		$fp = fopen( $path, "r" );
-		while( $line = fgets($fp) )
-		{
-			$line = rtrim( $line );
-			$cells = mb_split( ",", $line );
-			$list = array();
-			foreach( $cells as $cell )
-			{
-				$kv = mb_split( "=", $cell );
-				if( count($kv)==2 ) $list[ $kv[0] ] = $kv[1];
+			if($this->lastId < $s->id){
+				$this->lastId = $s->id;
 			}
-			$u = new TwitterUser( $list );
-			if( !$u->id || !$u->screen_name ) continue;
-
-			$this->listUser[ $u->id ] = $u;
 		}
+		gzclose($gz);
 	}
 
-	function saveUser( $path=null )
+	function saveStatus( $path )
 	{
-		if( !$path ) $path = LOG_DIR . self::NAME_USER_FILE;
-		if( count($this->listUser)==0 ) return;
+		$this->prepareDir($path);
+
+		$f = fopen($path, "w");
+		foreach( $this->listStatus as $s )
+		{
+			fwrite($f, json_encode($s->toArray(), JSON_UNESCAPED_UNICODE) . "\n");
+		}
+		fclose($f);
+	}
+
+	function saveStatusByDate( $dir )
+	{
+
+		$f = null;
+		$prepath = null;
+		foreach( $this->listStatus as $s )
+		{
+			$path = sprintf( "%s%s.json", $dir, date("Ymd", $s->created_at) );
+			$this->prepareDir( $path );
+			if( $path != $prepath ){
+				if( $f ) fclose( $f );
+				$f = fopen( $path, "a" );
+			}
+			fwrite($f, json_encode($s->toArray(), JSON_UNESCAPED_UNICODE) . "\n");
+			$prepath = $path;
+		}
+		if( $f ) fclose( $f );
+	}
+
+	private function prepareDir( $path )
+	{
 		$dir = dirname( $path );
 		if( !is_dir($dir) ) mkdir( $dir, 0777, true );
+	}
 
-		ksort( $this->listUser );
-
-		$fp = fopen( $path, "w" );
-		if( !$fp ) return;
-
-		foreach( $this->listUser as $uid => $user )
+	function retrieveStatus( $array )
+	{
+		foreach( $array as $a )
 		{
-			fprintf( $fp, "%s,%s\n", $uid, $user->toCsv() );
+			$s = new TwitterStatus($a);
+			$this->listStatus[] = $s;
+			$this->listUser[$s->user->screen_name] = $s->user;
+
+			if($this->lastId < $s->id) $this->lastId = $s->id;
 		}
-		fclose( $fp );
+	}
+
+	function loadUser( $path )
+	{
+		$f = fopen($path, "r");
+		while( $line = fgets($f) )
+		{
+			$a = json_decode($line, true);
+			$u = new TwitterUser($a);
+			$this->listUser[$u->screen_name] = $u;
+		}
+		fclose($f);
+	}
+
+	function saveUser( $path )
+	{
+		$f = fopen($path, "w");
+		foreach($this->listUser as $u)
+		{
+			fwrite($f, json_encode($u->toArray(), JSON_UNESCAPED_UNICODE) . "\n");
+		}
+		fclose($f);
 	}
 }
 
 class TwitterStatus
 {
+	const ID = 'id';
+	const CREATED_AT = 'created_at';
+	const TEXT = 'text';
+	const REPLY_TO = 'in_reply_to_status_id';
+	const USER = 'user';
+
 	public $id;
 	public $created_at;
 	public $text;
 	public $reply_to;
 
-	public $user;// class instance
+	public $user;
 
 	function __construct( $a )
 	{
-		if(is_a($a,"SimpleXMLElement")) $this->copyElement( $a );
 		if(is_array($a)) $this->copyArray( $a );
-	}
-
-	function copyElement( $element )
-	{
-		$this->id = (string)$element->id;
-		$this->created_at = strtotime( (string)$element->created_at );
-		$this->text = (string)$element->text;
-		$this->text = mb_ereg_replace("[,\r\n]+", " ", $this->text);
-		$this->reply_to = $element->in_reply_to_status_id ? (string)$element->in_reply_to_status_id : null;
-
-		$user = new TwitterUser( $element->user );
-		$this->user = $user;
 	}
 
 	function copyArray( $a )
 	{
-		if( is_numeric($a['id']) ) $this->id = $a['id'];
-		if( is_string($a['created_at']) ) $this->created_at = strtotime( $a['created_at'] );
-		if( is_string($a['text']) ) $this->text = $a['text'];
-		if( $a['reply_to'] ) $this->reply_to = $a['reply_to'];
+		$this->id = $a[self::ID . "_str"] ?  $a[self::ID . "_str"] :  $a[self::ID];	// なるべく文字列として
+		if( is_string($a[self::CREATED_AT]) ) $this->created_at = strtotime( $a[self::CREATED_AT] );
+		if( is_string($a[self::TEXT]) ) $this->text = $a[self::TEXT];
+		if( $a[self::REPLY_TO] ) $this->reply_to = $a[self::REPLY_TO];
 
-		$this->user = new TwitterUser( $a );
+		if( $a[self::USER] ) $this->user = new TwitterUser( $a[self::USER] );
 	}
 
-	function toCsv()
+	function toArray()
 	{
 		$created = date("Y-m-d H:i:s", $this->created_at);
-		return "id={$this->id},"
-			. "user_id={$this->user->id},"
-			. "user_screen_name={$this->user->screen_name},"
-			. "created_at={$created},"
-			. ($this->reply_to ? "reply_to={$this->reply_to}," : "")
-			. "text={$this->text}";
+
+		$a = array();
+		if( $this->user ) $a[self::USER] = $this->user->toArray();
+		$a[self::ID] = (string)$this->id;
+		$a[self::CREATED_AT] = $created;
+		if($this->reply_to) $a[self::REPLY_TO] = $this->reply_to;
+		$a[self::TEXT] = $this->text;
+		return $a;
 	}
 }
 
 class TwitterUser
 {
+	const ID = 'id';
+	const NAME = 'name';
+	const SCREEN_NAME = 'screen_name';
+	const IMAGE_URL = 'profile_image_url';
+
 	public $id;
 	public $name;
 	public $screen_name;
-	public $profile_image_url;
+	public $image_url;
 
 	function __construct( $a )
 	{
-		if(is_a($a,"SimpleXMLElement")) $this->copyElement( $a );
 		if(is_array($a)) $this->copyArray( $a );
 	}
 
-	function copyElement( $element )
-	{
-		$this->id = (string)$element->id;
-		$this->name = (string)$element->name;
-		$this->screen_name = (string)$element->screen_name;
-		$this->profile_image_url = (string)$element->profile_image_url;
-	}
 	function copyArray( $a )
 	{
-		if( is_numeric($a['user_id']) ) $this->id = $a['user_id'];
-		if( $a['user_name'] ) $this->name = $a['user_name'];
-		if( $a['user_screen_name'] ) $this->screen_name = $a['user_screen_name'];
-		if( $a['user_image_url'] ) $this->profile_image_url = $a['user_image_url'];
+		if( is_numeric($a[self::ID]) ) $this->id = $a[self::ID];
+		if( $a[self::NAME] ) $this->name = $a[self::NAME];
+		if( $a[self::SCREEN_NAME] ) $this->screen_name = $a[self::SCREEN_NAME];
+		if( $a[self::IMAGE_URL] ) $this->image_url = $a[self::IMAGE_URL];
 	}
 
-	function toCsv()
+	function toArray()
 	{
-		return "user_id={$this->id},"
-			. "user_name={$this->name},"
-			. "user_screen_name={$this->screen_name},"
-			. "user_image_url={$this->profile_image_url}";
+		$a = array();
+		$a[self::ID] = $this->id;
+		$a[self::NAME] = $this->name;
+		$a[self::SCREEN_NAME] = $this->screen_name;
+		$a[self::IMAGE_URL] = $this->image_url;
+		return $a;
 	}
 }
 

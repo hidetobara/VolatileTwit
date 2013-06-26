@@ -8,45 +8,24 @@ require_once( INCLUDE_DIR . "data/FileCache.class.php" );
  */
 class BatchCrawlStatus
 {
-	const URL_GET_TIMELINE = 'http://api.twitter.com/1/statuses/friends_timeline.xml';
-	const NAME_LAST_ID = 'crawl_status_last_id';
-	const GET_STATUS_MAX = 200;
-
-	protected $cache;
-	protected $oauth;
-
-	function __construct()
-	{
-		$this->cache = new FileCache();
-		$this->oauth = new TwitterOAuth(
-			CONSUMER_KEY,
-			CONSUMER_SECRET,
-			HIDETOBARA_OAUTH_KEY,
-			HIDETOBARA_OAUTH_SECRET
-			);
-	}
+	const TWITTER_CRAWL_KEY = "twitter_crawl_key";
 
 	function run()
 	{
-		$response = $this->getRecentStatus();
+		$cache = new FileCache();
+		$box = $cache->get( self::TWITTER_CRAWL_KEY );
+		if( !is_array($box) ) $box = array();
 
-		$object = $this->cache->get( self::NAME_LAST_ID );
+		$since = $box['since'];
+
+		$api = new TwitterApi(HIDETOBARA_OAUTH_KEY, HIDETOBARA_OAUTH_SECRET);
+		$a = $api->getHomeTimeline( $since );
 		$storage = new TwitterStorage();
-		$storage->setState( $object );
-		$storage->loadUserFromFile();
-		$storage->retrieveStatusFromXml( $response );
-		$storage->saveStatus();
-		$storage->saveUser();
+		$storage->retrieveStatus($a);
+		$storage->saveStatusByDate( LOG_DIR . "status/" );
 
-		$this->cache->set( self::NAME_LAST_ID, $storage->getState() );
-	}
-
-	function getRecentStatus()
-	{
-		$options = array( 'count' => self::GET_STATUS_MAX );
-		$response = $this->oauth->get( self::URL_GET_TIMELINE, $options	);
-		var_dump( $response );
-		return $response;
+		$box['since'] = $storage->lastId;
+		$cache->set( self::TWITTER_CRAWL_KEY, $box );
 	}
 }
 

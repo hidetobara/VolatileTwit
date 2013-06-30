@@ -16,16 +16,9 @@ require_once( INCLUDE_DIR . 'learn/ReplyState.class.php' );
  */
 abstract class VolatileTwitBase
 {
-	const URL_UPDATE_STATUS = 'http://api.twitter.com/1/statuses/update.xml';
-	const URL_GET_TIMELINE = 'http://api.twitter.com/1/statuses/home_timeline.xml';
 	const GET_STATUS_LIMIT = 20;
 
 	protected $talkRetryLimit = 3;
-
-	protected $consumerKey = CONSUMER_KEY;
-	protected $consumerSecret = CONSUMER_SECRET;
-	protected $userKey;
-	protected $userSecret;
 
 	protected $target;
 	protected $name;
@@ -40,32 +33,22 @@ abstract class VolatileTwitBase
 
 	abstract function run();// invoked by 10min
 
-	protected $twitterApi;
+	protected $api;
 	protected $cache;
-	protected function initTwitter()
+	protected function initTwitter( $key, $secret )
 	{
-		$this->twitterApi = new TwitterOAuth(
-			$this->consumerKey,
-			$this->consumerSecret,
-			$this->userKey,
-			$this->userSecret );
+		$this->twitter = new TwitterApi( $key, $secret );
 		$this->cache = new FileCache();
 	}
 	protected function postTalk( array $info )
 	{
-		$options = array( 'status' => $info['text'] );
-		if( $info['reply_to'] ) $options['in_reply_to_status_id'] = $info['reply_to'];
-		$response = $this->twitterApi->post( self::URL_UPDATE_STATUS, $options );
+		$opt = array();
+		if( $info['reply_to'] ) $opt['in_reply_to_status_id'] = $info['reply_to'];
+		$response = $this->twitter->updateStatus( $info['text'], $opt );
 		var_dump(array($info,$response));
 	}
-	protected function getTimelineResponse()
-	{
-		$options = array( 'count' => self::GET_STATUS_LIMIT, 'include_rts' => 0 );
-		$response = $this->twitterApi->get( self::URL_GET_TIMELINE, $options );
-		return $response;
-	}
 
-	protected function cacheKeyLastStatus(){		return sprintf("%s_last_status",$this->name);		}
+	protected function cacheKeyLastStatus(){		return sprintf("user_%s_status",$this->name);		}
 
 	protected function initLearn()
 	{

@@ -7,7 +7,7 @@ require_once( INCLUDE_DIR . "twitter/twitteroauth.php" );
  */
 class TwitterApi
 {
-	const GET_STATUS_MAX = 200;
+	public $statusLimit = 200;
 	const URL_HOME_TIMELINE = 'https://api.twitter.com/1.1/statuses/home_timeline.json';
 	const URL_UPDATE_STATUS = 'https://api.twitter.com/1.1/statuses/update.json';
 
@@ -23,18 +23,23 @@ class TwitterApi
 		);
 	}
 
-	function getHomeTimeline( $sinceId=null )
+	/*
+	 * since_id, count などを指定してTLを取得
+	 */
+	function getHomeTimeline( $opt=null )
 	{
-		$o = array( 'count' => self::GET_STATUS_MAX );
-		if( $sinceId ) $o['since_id'] = $sinceId;
-		$r = $this->oauth->get( self::URL_HOME_TIMELINE, $o );
+		if( !is_array($opt) ) $opt = array();
+		$opt['count'] = $this->statusLimit;
+		$opt['include_rts'] = 0;
+		$r = $this->oauth->get( self::URL_HOME_TIMELINE, $opt );
 		return json_decode($r, true);
 	}
 
-	function updateStatus( $text )
+	function updateStatus( $text, $opt=null )
 	{
-		$o = array( 'status'=>$text );
-		$r = $this->oauth->post( self::URL_UPDATE_STATUS, $o );
+		if( !is_array($opt) ) $opt = array();
+		$opt['status'] = $text;
+		$r = $this->oauth->post( self::URL_UPDATE_STATUS, $opt );
 		return json_decode($r, true);
 	}
 }
@@ -144,6 +149,13 @@ class TwitterStorage
 			fwrite($f, json_encode($u->toArray(), JSON_UNESCAPED_UNICODE) . "\n");
 		}
 		fclose($f);
+	}
+
+	function updateUserCache( $box )
+	{
+		if( !is_array($box) ) $box = array();
+		$box['since_id'] = $this->lastId;
+		return $box;
 	}
 }
 

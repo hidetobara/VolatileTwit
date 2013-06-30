@@ -16,15 +16,12 @@ class BatchCrawlStatus
 		$box = $cache->get( self::TWITTER_CRAWL_KEY );
 		if( !is_array($box) ) $box = array();
 
-		$since = $box['since'];
-
 		$api = new TwitterApi(HIDETOBARA_OAUTH_KEY, HIDETOBARA_OAUTH_SECRET);
-		$a = $api->getHomeTimeline( $since );
+		$a = $api->getHomeTimeline( $box );
 		$storage = new TwitterStorage();
 		$storage->retrieveStatus($a);
 		$storage->saveStatusByDate( LOG_DIR . "status/" );
-
-		$box['since'] = $storage->lastId;
+		$box = $storage->updateUserCache( $box );
 		$cache->set( self::TWITTER_CRAWL_KEY, $box );
 	}
 }

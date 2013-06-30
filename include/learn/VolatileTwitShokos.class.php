@@ -10,14 +10,11 @@ class VolatileTwitShokos extends VolatileTwitBase
 		$this->name = 'shokos';
 		$this->myName = 'shok0s';
 		$this->target = 2;
-		
-		$this->userKey = SHOKOS_OAUTH_KEY;
-		$this->userSecret = SHOKOS_OAUTH_SECRET;
-		
-		$this->initTwitter();
+
+		$this->initTwitter(SHOKOS_OAUTH_KEY, SHOKOS_OAUTH_SECRET);
 		$this->initLearn();
 	}
-	
+
 	function isTrigered()
 	{
 		$hoursHit = array(11,13,15,17,19,21);
@@ -27,11 +24,11 @@ class VolatileTwitShokos extends VolatileTwitBase
 		if( in_array($hour,$hoursHit) && floor($minute/10)==0 ) return true;
 		return false;
 	}
-	
+
 	function run()
 	{
 		if( !$this->isTrigered() ) return;
-		
+
 		$info = $this->bestTalkInfo();
 		$this->postTalk($info);
 	}

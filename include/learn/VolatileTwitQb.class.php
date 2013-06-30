@@ -11,10 +11,7 @@ class VolatileTwitQb extends VolatileTwitBase
 		$this->myName = 'kawanqb38';
 		$this->target = 3;
 
-		$this->userKey = QB_OAUTH_KEY;
-		$this->userSecret = QB_OAUTH_SECRET;
-
-		$this->initTwitter();
+		$this->initTwitter(QB_OAUTH_KEY, QB_OAUTH_SECRET);
 		$this->initLearn();
 	}
 

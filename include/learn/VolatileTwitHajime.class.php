@@ -12,10 +12,7 @@ class VolatileTwitHajime extends VolatileTwitBase
 		$this->myName = 'hajimeh0shi';
 		$this->target = 1;
 
-		$this->userKey = HAJIME_OAUTH_KEY;
-		$this->userSecret = HAJIME_OAUTH_SECRET;
-
-		$this->initTwitter();
+		$this->initTwitter(HAJIME_OAUTH_KEY, HAJIME_OAUTH_SECRET);
 		$this->initLearn();
 	}
 
@@ -45,20 +42,18 @@ class VolatileTwitHajime extends VolatileTwitBase
 		$generator = new ReplyState($this->name);
 		$generator->load();
 
-		$object = $this->cache->get( $this->cacheKeyLastStatus() );
+		$box = $this->cache->get( $this->cacheKeyLastStatus() );
+		$timelines = $this->twitter->getHomeTimeline( $box );
 		$storage = new TwitterStorage();
-		$storage->setState( $object );
-		$storage->retrieveStatusFromXml( $this->getTimelineResponse() );
+		$storage->retrieveStatus( $timelines );
 
-		foreach( $storage->getNewStatusList() as $status )
+		foreach( $storage->listStatus as $status )
 		{
 			if( $this->isMyTweet($status) ) continue;
 
 			if( ($this->isSpecialTweet($status) && $this->invoker(5))
-				|| $this->isReplyTweetForMe($status)
-				 )
+				|| $this->isReplyTweetForMe($status) )
 			{
-				var_dump($status);
 				$best = $generator->generate($status->text);
 				if( $best['to'] )
 				{
@@ -69,7 +64,8 @@ class VolatileTwitHajime extends VolatileTwitBase
 				}
 			}
 		}
-		$this->cache->set( $this->cacheKeyLastStatus(), $storage->getState() );
+
+		$this->cache->set( $this->cacheKeyLastStatus(), $storage->updateUserCache( $box ) );
 	}
 	private function isMyTweet($status)
 	{

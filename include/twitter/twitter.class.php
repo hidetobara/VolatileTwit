@@ -105,7 +105,7 @@ class TwitterStorage
 				if( $f ) fclose( $f );
 				$f = fopen( $path, "a" );
 			}
-			fwrite($f, json_encode($s->toArray(), JSON_UNESCAPED_UNICODE) . "\n");
+			fwrite($f, json_encode($s->toArray()) . "\n");
 			$prepath = $path;
 		}
 		if( $f ) fclose( $f );

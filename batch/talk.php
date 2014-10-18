@@ -6,9 +6,9 @@ require_once( INCLUDE_DIR . "learn/VolatileTwitHajime.class.php" );
 require_once( INCLUDE_DIR . "learn/VolatileTwitShokos.class.php" );
 require_once( INCLUDE_DIR . "learn/VolatileTwitQb.class.php" );
 
-$hajime = new VolatileTwitHajime();
-$hajime->run();
-unset($hajime);
+//$hajime = new VolatileTwitHajime();
+//$hajime->run();
+//unset($hajime);
 
 $shokos = new VolatileTwitShokos();
 $shokos->run();
